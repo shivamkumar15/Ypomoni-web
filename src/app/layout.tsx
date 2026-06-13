@@ -1,5 +1,8 @@
 import { ReactNode } from 'react'
+import { JetBrains_Mono } from 'next/font/google'
 import './globals.css'
+
+const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'] })
 
 export const metadata = {
   title: 'Ypomoni',
@@ -14,7 +17,7 @@ export const metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={jetbrainsMono.className}>{children}</body>
     </html>
   )
 }

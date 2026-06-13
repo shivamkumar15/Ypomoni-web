@@ -1,53 +1,55 @@
 'use client'
 
-import { SplineScene } from "@/components/ui/splite";
 import { Card } from "@/components/ui/card"
-import { Spotlight } from "@/components/ui/spotlight"
- 
+
 export function SplineSceneBasic() {
   return (
-    <Card className="w-full min-h-screen md:h-full bg-black/[0.96] relative overflow-hidden border-0 rounded-none">
-      <Spotlight
-        className="-top-40 left-0 md:left-60 md:-top-20"
-        fill="white"
-      />
-      
-      <div className="grid min-h-screen md:h-full grid-cols-1 md:grid-cols-[42%_58%]">
-        {/* Left content */}
+    <Card className="w-full min-h-screen md:h-full bg-neutral-50 relative overflow-hidden border-0 rounded-none">
+      <div className="grid min-h-screen md:h-full grid-cols-1 md:grid-cols-2 items-center">
+        {/* Left content: Text */}
         <div className="relative z-10 flex flex-col justify-center items-start text-left px-6 pt-32 pb-12 md:px-24 md:py-0">
-          <h1 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-pink-700">
              Ypomoni
           </h1>
-          <p className="mt-4 text-neutral-300 max-w-xl text-base md:text-lg leading-relaxed">
+          <p className="mt-6 text-pink-600 max-w-xl text-lg md:text-xl leading-relaxed">
             Your smart online safety guardian always with you and by your side. Make your travel safer and more enjoyable with Ypomoni, your personal travel safety assistant.
           </p>
         </div>
 
-        {/* Right content */}
-        <div className="relative h-[450px] md:h-full md:w-full">
-          <SplineScene 
-            scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-            className="w-full h-full"
-          />
-          {/* Glowing logo on robot's chest */}
-          <div className="absolute top-[43%] left-[50%] -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10 opacity-90 mix-blend-screen animate-pulse">
-            <svg
-              className="h-8 w-8 md:h-12 md:w-12 drop-shadow-[0_0_12px_#ff0066]"
-              viewBox="0 0 576 508"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M0 0 C44.55 0 89.1 0 135 0 C135 20.46 135 40.92 135 62 C112.89 62 90.78 62 68 62 C68 83.12 68 104.24 68 126 C45.56 126 23.12 126 0 126 C0 84.42 0 42.84 0 0 Z"
-                fill="#FF0365"
-                transform="translate(186,94)"
-              />
-              <path
-                d="M0 0 C22.77 0 45.54 0 69 0 C69.0825 6.105 69.165 12.21 69.25 18.5 C69.28641602 20.39041016 69.32283203 22.28082031 69.36035156 24.22851562 C69.57130979 43.18091474 65.8002973 59.4302241 52.51025391 73.65234375 C40.62160018 85.74223257 23.43126876 94.85812131 7 99 C6.01 99 5.02 99 4 99 C8.20909305 104.81802964 12.81341532 109.95558488 17.94604492 114.97729492 C21.23125221 118.19929259 24.27381872 121.54107936 27.2578125 125.0390625 C29.96922364 128.09091988 32.90337147 130.91144766 35.80859375 133.77734375 C38.41414934 136.42005522 40.82148519 139.19480116 43.23046875 142.015625 C45.80813559 144.9062536 48.59401754 147.56920974 51.3984375 150.23828125 C53 152 53 152 54 155 C43.96002985 155.37297646 33.92174065 155.65610674 23.87621975 155.82899475 C19.20964579 155.91203993 14.54785383 156.02434608 9.8840332 156.20703125 C-22.74853768 157.45203671 -22.74853768 157.45203671 -30.62841797 151.6484375 C-33.9326828 148.4981246 -36.4011507 145.07195406 -38.67965698 141.13098145 C-41.00099422 137.3844349 -44.02214265 134.2316569 -47 131 C-47.54401962 130.40513794 -48.08803925 129.81027588 -48.64854431 129.1973877 C-50.09159781 127.62453491 -51.54412069 126.0609829 -53 124.5 C-54.45483219 122.94013982 -55.90562994 121.37914143 -57.33299255 119.79406738 C-58.4513253 118.5904949 -59.61088008 117.42405109 -60.80628967 116.29699707 C-64.38088713 112.72331737 -66.43595307 110.09622418 -66.79467773 104.9609375 C-66.79358407 103.09859051 -66.75489099 101.23598205 -66.68359375 99.375 C-66.67368912 98.38749756 -66.66378448 97.39999512 -66.65357971 96.38256836 C-66.61464586 93.25348261 -66.52686485 90.12801053 -66.4375 87 C-66.40235893 84.86854054 -66.37042485 82.73702564 -66.34179688 80.60546875 C-66.26495493 75.40242975 -66.14808311 70.20147306 -66 65 C-65.08822998 64.95512451 -64.17645996 64.91024902 -63.23706055 64.86401367 C-59.80152644 64.6890892 -56.36692624 64.50322136 -52.93237305 64.31030273 C-51.455713 64.22952405 -49.97881829 64.15290892 -48.50170898 64.08081055 C-34.13307063 63.37431595 -17.78049903 61.39804535 -6.84765625 50.94140625 C-1.85890348 44.48896073 -0.69428999 38.75559684 -0.5859375 30.76171875 C-0.56829346 29.98042603 -0.55064941 29.1991333 -0.5324707 28.39416504 C-0.46968634 25.49214781 -0.4233048 22.58979436 -0.375 19.6875 C-0.25125 13.190625 -0.1275 6.69375 0 0 Z"
-                fill="#FF0063"
-                transform="translate(321,156)"
-              />
-            </svg>
+        {/* Right content: Mobile Phone */}
+        <div className="relative flex justify-center items-center w-full pb-12 md:pb-0">
+          <div className="relative w-[280px] h-[580px] md:w-[320px] md:h-[650px] bg-white border-[8px] border-neutral-200 rounded-[3rem] shadow-2xl overflow-hidden flex flex-col">
+            {/* Notch */}
+            <div className="absolute top-0 inset-x-0 h-7 flex justify-center z-20">
+              <div className="w-32 h-6 bg-neutral-200 rounded-b-3xl"></div>
+            </div>
+            
+            {/* Screen Content */}
+            <div className="flex-1 bg-white p-6 pt-12 flex flex-col gap-4 relative">
+              {/* Header inside phone */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-10 h-10 rounded-full bg-pink-50 flex items-center justify-center">
+                  <div className="w-5 h-5 bg-pink-700 rounded-full"></div>
+                </div>
+                <div className="w-20 h-4 bg-neutral-100 rounded-full"></div>
+              </div>
+              
+              {/* Map/Location Mockup */}
+              <div className="w-full h-56 bg-neutral-100 rounded-2xl relative overflow-hidden flex items-center justify-center">
+                <div className="w-16 h-16 bg-pink-700/20 rounded-full flex items-center justify-center animate-pulse">
+                  <div className="w-6 h-6 bg-pink-700 rounded-full shadow-[0_0_15px_rgba(190,24,93,0.5)]"></div>
+                </div>
+              </div>
+              
+              {/* Status texts */}
+              <div className="mt-4 w-3/4 h-5 bg-neutral-100 rounded-md"></div>
+              <div className="w-1/2 h-5 bg-neutral-100 rounded-md"></div>
+              
+              {/* Emergency SOS Button */}
+              <div className="mt-auto mb-4 w-full h-16 bg-pink-700 rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-pink-700/30">
+                SOS
+              </div>
+            </div>
           </div>
         </div>
       </div>

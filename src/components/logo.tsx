@@ -11,7 +11,7 @@ export function Logo() {
         priority
         className="h-10 w-10 md:h-20 md:w-20 object-contain"
       />
-      <span className="text-lg md:text-3xl font-normal tracking-wide text-[#FF0063]">
+      <span className="text-lg md:text-3xl font-normal tracking-wide text-pink-700">
         YPOMONI
       </span>
     </div>

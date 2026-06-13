@@ -4,7 +4,7 @@ import { SkiperTextRevealH } from '@/components/v1/skiper72'
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen w-full bg-black overflow-clip">
+    <main className="relative min-h-screen w-full bg-neutral-50 overflow-clip">
       <header className="absolute left-6 top-6 z-20 md:left-12 md:top-10">
         <Logo />
       </header>
@@ -13,7 +13,7 @@ export default function Home() {
         <SplineSceneBasic />
       </section>
 
-      <section className="w-full bg-black">
+      <section className="w-full bg-neutral-50">
         <SkiperTextRevealH>
           {`Ypomoni is a smart personal safety app
 that enables instant SOS alerts, live location

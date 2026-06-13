@@ -40,7 +40,7 @@ function RevealLine({ line, index, total, progress }: RevealLineProps) {
   return (
     <motion.span
       style={{ opacity, x }}
-      className="block whitespace-pre-wrap text-white"
+      className="block whitespace-pre-wrap text-pink-700"
     >
       {line}
     </motion.span>
@@ -62,11 +62,11 @@ export function SkiperTextRevealH({ children, className }: SkiperTextRevealHProp
     .filter(Boolean)
 
   return (
-    <div ref={containerRef} className="relative h-[300vh] w-full bg-black">
+    <div ref={containerRef} className="relative h-[300vh] w-full bg-neutral-50">
       <div className="sticky top-0 flex h-screen w-full items-center overflow-hidden px-8 md:px-24">
         <p
           className={cn(
-            'w-full max-w-6xl text-left font-medium leading-[1.2] tracking-tight text-white text-[clamp(1.5rem,4vw,3.5rem)]',
+            'w-full max-w-6xl text-left font-medium leading-[1.2] tracking-tight text-pink-700 text-[clamp(1.5rem,4vw,3.5rem)]',
             className
           )}
         >
