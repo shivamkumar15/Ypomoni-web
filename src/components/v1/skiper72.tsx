@@ -9,40 +9,37 @@ interface SkiperTextRevealHProps {
   className?: string
 }
 
-interface RevealLineProps {
-  line: string
+interface RevealWordProps {
+  word: string
   index: number
   total: number
   progress: MotionValue<number>
 }
 
-function RevealLine({ line, index, total, progress }: RevealLineProps) {
-  const animationEnd = 0.7
-  const duration = 0.3 
+function RevealWord({ word, index, total, progress }: RevealWordProps) {
+  const animationEnd = 0.8
+  const duration = 0.2 
   
   const start = index * ((animationEnd - duration) / Math.max(total - 1, 1))
   const end = start + duration
 
-  // Explicitly mapping the full 0 to 1 scroll range to absolutely guarantee 
-  // the text stays fully solid white (1) until the very end of the scroll.
-  // Removed blur filter to prevent Safari/hardware-acceleration gray-out bugs.
   const opacity = useTransform(
     progress,
     [0, start, start + duration * 0.5, 1],
     [0, 0, 1, 1]
   )
-  const x = useTransform(
+  const y = useTransform(
     progress,
     [0, start, end, 1],
-    ['30vw', '30vw', '0vw', '0vw']
+    ['15px', '15px', '0px', '0px']
   )
 
   return (
     <motion.span
-      style={{ opacity, x }}
-      className="block whitespace-pre-wrap text-pink-700"
+      style={{ opacity, y }}
+      className="inline-block mr-[0.25em] text-pink-700"
     >
-      {line}
+      {word}
     </motion.span>
   )
 }
@@ -55,27 +52,27 @@ export function SkiperTextRevealH({ children, className }: SkiperTextRevealHProp
     offset: ['start start', 'end end'],
   })
 
-  // Split content into discrete lines
-  const lines = children
-    .split('\n')
-    .map((line) => line.trim())
+  // Split content into discrete words for fluid wrapping
+  const words = children
+    .replace(/\n/g, ' ')
+    .split(' ')
     .filter(Boolean)
 
   return (
-    <div ref={containerRef} className="relative h-[300vh] w-full bg-neutral-50">
-      <div className="sticky top-0 flex h-screen w-full items-center overflow-hidden px-8 md:px-24">
+    <div ref={containerRef} className="relative h-[250vh] w-full bg-neutral-50">
+      <div className="sticky top-0 flex min-h-screen w-full items-center justify-center px-6 py-24 md:px-24">
         <p
           className={cn(
-            'w-full max-w-6xl text-left font-medium leading-[1.2] tracking-tight text-pink-700 text-[clamp(1.5rem,4vw,3.5rem)]',
+            'w-full max-w-5xl text-center md:text-left font-medium leading-[1.4] tracking-tight text-pink-700 text-[clamp(1.2rem,4vw,3.5rem)]',
             className
           )}
         >
-          {lines.map((line, index) => (
-            <RevealLine
-              key={`${line}-${index}`}
-              line={line}
+          {words.map((word, index) => (
+            <RevealWord
+              key={`${word}-${index}`}
+              word={word}
               index={index}
-              total={lines.length}
+              total={words.length}
               progress={scrollYProgress}
             />
           ))}
