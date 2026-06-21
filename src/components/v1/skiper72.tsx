@@ -60,7 +60,7 @@ export function SkiperTextRevealH({ children, className }: SkiperTextRevealHProp
 
   return (
     <div ref={containerRef} className="relative h-[220vh] w-full bg-white">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-[#fff8fb] to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-[#fff8fb]" />
       <div className="sticky top-0 flex min-h-screen w-full items-center justify-center px-6 py-24 md:px-24">
         <p
           className={cn(

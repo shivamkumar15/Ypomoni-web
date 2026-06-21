@@ -30,7 +30,7 @@ export function SplineSceneBasic() {
 
   return (
     <Card ref={sectionRef} className="relative min-h-[125vh] w-full overflow-hidden rounded-none border-0 bg-[#fff8fb] shadow-none">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(244,114,182,0.18),transparent_30%),radial-gradient(circle_at_82%_12%,rgba(225,29,72,0.11),transparent_26%),linear-gradient(180deg,#fff8fb_0%,#ffffff_66%)]" />
+      <div className="absolute inset-0 bg-[#fff8fb]" />
       <motion.div style={{ scale: glowScale }} className="absolute left-1/2 top-24 h-72 w-72 -translate-x-1/2 rounded-full bg-pink-200/25 blur-3xl" />
       <motion.div
         aria-hidden="true"
@@ -140,7 +140,7 @@ export function SplineSceneBasic() {
             </div>
 
             <div className="relative h-full overflow-hidden rounded-[2.7rem] bg-neutral-950">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_28%,rgba(244,63,94,0.34),transparent_34%),linear-gradient(180deg,#1b1020_0%,#09090b_56%,#111827_100%)]" />
+              <div className="absolute inset-0 bg-[#120b16]" />
               <div className="relative flex h-full flex-col px-5 pt-12 pb-5 text-white">
                 <div className="flex items-center justify-between">
                   <div>
@@ -161,7 +161,9 @@ export function SplineSceneBasic() {
                     <span className="rounded-full bg-emerald-400/15 px-2.5 py-1 text-xs font-semibold text-emerald-200">Sharing</span>
                   </div>
                   <div className="relative h-44 overflow-hidden rounded-[1.4rem] bg-[#18181b]">
-                    <div className="absolute inset-0 opacity-80 [background-image:linear-gradient(120deg,transparent_0_24%,rgba(255,255,255,0.12)_24%_25%,transparent_25%_62%,rgba(255,255,255,0.1)_62%_63%,transparent_63%),linear-gradient(35deg,transparent_0_38%,rgba(255,255,255,0.11)_38%_39%,transparent_39%)]" />
+                    <div className="absolute left-5 top-8 h-1 w-40 rotate-12 rounded-full bg-white/10" />
+                    <div className="absolute right-4 top-20 h-1 w-36 -rotate-12 rounded-full bg-white/10" />
+                    <div className="absolute bottom-10 left-8 h-1 w-32 rotate-6 rounded-full bg-white/10" />
                     <div className="absolute left-8 top-8 h-24 w-24 rounded-full border border-pink-300/25" />
                     <div className="absolute bottom-6 right-5 h-28 w-28 rounded-full border border-white/10" />
                     <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center">

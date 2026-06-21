@@ -10,21 +10,21 @@ const scenes = [
     eyebrow: 'Step 01',
     title: 'Hold SOS for 3 seconds',
     copy: 'The 3D button locks into focus as the user confirms the alert, reducing accidental taps while keeping the emergency action fast.',
-    color: 'from-pink-500 to-rose-600',
+    color: 'bg-pink-600',
   },
   {
     icon: LocateFixed,
     eyebrow: 'Step 02',
     title: 'Live location starts moving',
     copy: 'The app opens a live tracking view so trusted contacts can see the user’s movement in real time.',
-    color: 'from-fuchsia-500 to-pink-600',
+    color: 'bg-fuchsia-600',
   },
   {
     icon: ContactRound,
     eyebrow: 'Step 03',
     title: 'Emergency contacts are notified',
     copy: 'Selected contacts receive the SOS signal and can follow the live location from their mobile app.',
-    color: 'from-rose-500 to-red-500',
+    color: 'bg-rose-600',
   },
 ]
 
@@ -44,7 +44,8 @@ export function ScrollShowcase() {
   return (
     <section ref={ref} className="relative overflow-hidden bg-neutral-950 px-6 py-28 text-white md:px-10 lg:px-12">
       <motion.div style={{ y: orbY }} className="absolute left-1/2 top-24 h-80 w-80 -translate-x-1/2 rounded-full bg-pink-500/20 blur-3xl" />
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.045)_1px,transparent_1px)] bg-[size:52px_52px] [mask-image:radial-gradient(circle_at_center,black,transparent_72%)]" />
+      <div className="absolute inset-0 bg-neutral-950" />
+      <div className="absolute inset-x-0 top-0 h-px bg-white/10" />
 
       <div className="relative mx-auto grid max-w-7xl gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
         <div>
@@ -63,7 +64,7 @@ export function ScrollShowcase() {
             className="absolute left-1/2 top-1/2 h-[520px] w-[330px] -translate-x-1/2 -translate-y-1/2 rounded-[3rem] border border-white/15 bg-white/[0.08] p-5 shadow-[0_40px_110px_rgba(0,0,0,0.45)] backdrop-blur-xl md:w-[390px]"
           >
             <div className="relative h-full overflow-hidden rounded-[2.2rem] bg-[#100914] p-5">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_24%,rgba(236,72,153,0.36),transparent_34%)]" />
+              <div className="absolute inset-0 bg-[#100914]" />
               <div className="relative flex h-full flex-col">
                 <div className="flex items-center justify-between">
                   <div>
@@ -74,7 +75,9 @@ export function ScrollShowcase() {
                 </div>
 
                 <div className="relative mt-8 h-56 overflow-hidden rounded-[1.8rem] border border-white/10 bg-white/[0.06]">
-                  <div className="absolute inset-0 opacity-70 [background-image:linear-gradient(125deg,transparent_0_24%,rgba(255,255,255,0.14)_24%_25%,transparent_25%_58%,rgba(255,255,255,0.12)_58%_59%,transparent_59%),linear-gradient(42deg,transparent_0_39%,rgba(255,255,255,0.11)_39%_40%,transparent_40%)]" />
+                  <div className="absolute left-8 top-10 h-1 w-44 rotate-12 rounded-full bg-white/10" />
+                  <div className="absolute right-6 top-24 h-1 w-36 -rotate-12 rounded-full bg-white/10" />
+                  <div className="absolute bottom-10 left-10 h-1 w-32 rotate-6 rounded-full bg-white/10" />
                   <div className="absolute left-8 top-9 h-24 w-24 rounded-full border border-pink-300/20" />
                   <motion.div style={{ width: mapLine }} className="absolute left-8 top-1/2 h-1 rounded-full bg-pink-400 shadow-[0_0_24px_rgba(244,114,182,0.65)]" />
                   <motion.div style={{ x: mapLine }} className="absolute left-2 top-[calc(50%-18px)] flex h-9 w-9 items-center justify-center rounded-full bg-pink-500 text-white shadow-[0_0_30px_rgba(236,72,153,0.7)]">
@@ -112,7 +115,7 @@ export function ScrollShowcase() {
                 transition={{ duration: 0.7, delay: index * 0.08 }}
                 className={`absolute ${side} top-12 ${y} z-10 w-64 rounded-[1.7rem] border border-white/10 bg-white/[0.09] p-4 shadow-2xl shadow-black/20 backdrop-blur-xl`}
               >
-                <div className={`mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${scene.color}`}>
+                <div className={`mb-5 flex h-12 w-12 items-center justify-center rounded-2xl ${scene.color}`}>
                   <Icon className="h-6 w-6" />
                 </div>
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-pink-200">{scene.eyebrow}</p>
