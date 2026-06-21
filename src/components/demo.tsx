@@ -1,25 +1,71 @@
 'use client'
 
 import { Card } from '@/components/ui/card'
-import { BellRing, ChevronRight, CircleGauge, Home, ShieldCheck, SlidersHorizontal } from 'lucide-react'
-import { motion, useScroll, useTransform } from 'framer-motion'
-import { useRef } from 'react'
+import { BellRing, Camera, ChevronRight, Circle, Compass, Footprints, Home, MapPin, Plus, ShieldCheck, SlidersHorizontal, UserRound, UsersRound } from 'lucide-react'
+import { animate, motion, useScroll, useTransform, useMotionValue, useMotionTemplate } from 'framer-motion'
+import { useRef, useState, useEffect } from 'react'
+
+type AppScreen = 'home' | 'map' | 'profile'
+type SosMode = 'idle' | 'holding' | 'sent'
 
 export function SplineSceneBasic() {
   const sectionRef = useRef<HTMLDivElement>(null)
+  const holdTimerRef = useRef<number | null>(null)
+  const [activeScreen, setActiveScreen] = useState<AppScreen>('home')
+  const [sosMode, setSosMode] = useState<SosMode>('idle')
+  const [hasContact, setHasContact] = useState(false)
+  const holdValue = useMotionValue(0)
+  
+  const ringDashoffset = useTransform(holdValue, [0, 2000], [251, 0])
+  const holdTextDisplay = useTransform(holdValue, (v) => `Hold... ${(v / 1000).toFixed(1)}s / 2.0s`)
+
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ['start start', 'end start'],
   })
 
-  const phoneRotateX = useTransform(scrollYProgress, [0, 1], [9, -7])
-  const phoneRotateY = useTransform(scrollYProgress, [0, 1], [-13, 11])
-  const phoneY = useTransform(scrollYProgress, [0, 1], [0, -120])
+  const startSosHold = () => {
+    if (sosMode === 'sent') return
+    setSosMode('holding')
+    holdValue.set(0)
+    
+    animate(holdValue, 2000, {
+      duration: 2,
+      ease: 'linear',
+    })
+    
+    holdTimerRef.current = window.setTimeout(() => {
+      setSosMode('sent')
+    }, 2000)
+  }
+
+  const cancelSosHold = () => {
+    if (holdTimerRef.current) {
+      window.clearTimeout(holdTimerRef.current)
+      holdTimerRef.current = null
+    }
+
+    animate(holdValue, 0, { duration: 0.2 })
+    setSosMode((mode) => (mode === 'holding' ? 'idle' : mode))
+  }
+
+  const resetAlert = () => {
+    cancelSosHold()
+    setSosMode('idle')
+  }
+
+  useEffect(() => {
+    return () => {
+      if (holdTimerRef.current) window.clearTimeout(holdTimerRef.current)
+    }
+  }, [])
+
+  const phoneY = useTransform(scrollYProgress, [0, 1], [0, -60])
   const glowScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.9, 1.25, 1])
   const sosProgress = useTransform(scrollYProgress, [0, 0.65], ['18%', '100%'])
 
   return (
-    <Card ref={sectionRef} className="relative min-h-[125vh] w-full overflow-hidden rounded-none border-0 bg-[#fff8fb] shadow-none">
+    <Card ref={sectionRef} className="relative min-h-[165vh] w-full overflow-hidden rounded-none border-0 bg-[#fff8fb] shadow-none">
       <div className="absolute inset-0 bg-[#fff8fb]" />
       <motion.div style={{ scale: glowScale }} className="absolute left-1/2 top-24 h-72 w-72 -translate-x-1/2 rounded-full bg-pink-200/25 blur-3xl" />
       <motion.div
@@ -90,10 +136,10 @@ export function SplineSceneBasic() {
           </div>
         </div>
 
-        <div className="relative flex min-h-[720px] w-full items-center justify-center [perspective:1400px]">
+        <div className="relative flex min-h-[760px] w-full items-start justify-center pt-4 [perspective:1400px] md:sticky md:top-10">
           <motion.div
-            style={{ rotateX: phoneRotateX, rotateY: phoneRotateY, y: phoneY, transformStyle: 'preserve-3d' }}
-            className="relative h-[630px] w-[314px] rounded-[3.4rem] border-[10px] border-neutral-950 bg-neutral-950 shadow-[0_35px_90px_rgba(17,24,39,0.28)] md:h-[690px] md:w-[342px]"
+            style={{ y: phoneY }}
+            className="relative h-[660px] w-[320px] rounded-[3.4rem] border-[10px] border-neutral-950 bg-neutral-950 shadow-[0_35px_90px_rgba(17,24,39,0.22)] md:h-[720px] md:w-[342px]"
           >
             <div className="absolute inset-x-0 top-0 z-30 flex justify-center">
               <div className="h-7 w-36 rounded-b-3xl bg-neutral-950" />
@@ -101,55 +147,327 @@ export function SplineSceneBasic() {
 
             <div className="relative h-full overflow-hidden rounded-[2.7rem] bg-neutral-950">
               <div className="absolute inset-0 bg-black" />
-              <div className="relative flex h-full flex-col px-5 pt-12 pb-4 text-white">
+              <motion.div
+                initial={false}
+                animate={{ opacity: activeScreen === 'home' ? 1 : 0, x: activeScreen === 'home' ? 0 : -20, scale: activeScreen === 'home' ? 1 : 0.98 }}
+                transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                className={`${activeScreen === 'home' ? 'flex' : 'hidden'} absolute inset-0 flex-col px-5 pt-12 pb-4 text-white`}
+              >
                 <div className="mb-6 flex items-center justify-between border-b border-white/10 pb-5">
                   <h2 className="text-3xl font-bold tracking-tight">Home</h2>
                   <BellRing className="h-7 w-7 text-white" />
                 </div>
 
-                <div className="rounded-[2rem] border border-white/10 bg-[#141414] px-5 py-8 shadow-[0_28px_80px_rgba(219,39,119,0.16)]">
-                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-pink-950/50 text-pink-400">
-                    <ShieldCheck className="h-8 w-8" />
-                  </div>
-                  <h3 className="mt-7 text-center text-3xl font-bold tracking-tight">Emergency Alert</h3>
-                  <p className="mx-auto mt-4 max-w-[15rem] text-center text-sm leading-6 text-white/55">
-                    Press and hold to trigger an emergency alert instantly.
-                  </p>
+                {sosMode === 'sent' ? (
+                  <div className="rounded-[1.8rem] bg-[#ff3f68] px-4 py-4 text-white shadow-[0_28px_90px_rgba(244,63,94,0.28)]">
+                    <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-full border border-white/25 bg-white/15">
+                      <ShieldCheck className="h-6 w-6 fill-white" />
+                    </div>
+                    <h3 className="mt-3 text-center text-xl font-black tracking-tight">Emergency alert sent</h3>
+                    <p className="mx-auto mt-2 max-w-[14rem] text-center text-xs leading-4 text-white/80">
+                      Stay calm. Emergency mode is active and your SOS flow is running.
+                    </p>
 
-                  <div className="relative mx-auto mt-11 flex h-56 w-56 items-center justify-center rounded-full bg-pink-950/30 shadow-[0_0_70px_rgba(219,39,119,0.26)]">
-                    <motion.span animate={{ scale: [1, 1.08, 1] }} transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }} className="absolute h-48 w-48 rounded-full border border-pink-500/20" />
-                    <motion.span animate={{ scale: [1, 1.16, 1], opacity: [0.8, 0.35, 0.8] }} transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }} className="absolute h-40 w-40 rounded-full border border-pink-500/30" />
-                    <button className="relative flex h-36 w-36 flex-col items-center justify-center rounded-full bg-pink-600 text-white shadow-[0_22px_70px_rgba(219,39,119,0.5)]" type="button">
-                      <BellRing className="h-11 w-11" />
-                      <span className="mt-3 text-xl font-black tracking-[0.22em]">ALERT</span>
+                    <div className="mt-4 rounded-[1.5rem] bg-white px-4 py-4 text-center text-neutral-700">
+                      <p className="text-xs font-bold">Emergency mode is active</p>
+                      <p className="mt-2 text-3xl font-black tracking-widest text-[#ff3f68]">LIVE</p>
+                      <p className="mt-1 text-[11px] font-bold text-neutral-500">help mode in progress</p>
+                      <button onClick={resetAlert} className="mt-4 w-full rounded-xl border border-pink-200 py-2.5 text-sm font-black text-[#ff3f68]" type="button">
+                        Cancel Alert
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="rounded-[1.8rem] border border-white/10 bg-[#141414] px-4 py-4 shadow-[0_28px_80px_rgba(219,39,119,0.16)]">
+                    <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-[#ff3f68]/10 text-[#ff3f68]">
+                      <ShieldCheck className="h-6 w-6" />
+                    </div>
+                    <h3 className="mt-3 text-center text-xl font-bold tracking-tight">Emergency Alert</h3>
+                    <p className="mx-auto mt-2 max-w-[13rem] text-center text-xs leading-4 text-white/55">
+                      Press and hold to trigger an emergency alert instantly.
+                    </p>
+
+                    <div className="relative mx-auto mt-6 flex h-48 w-48 items-center justify-center">
+                      <svg className="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="40" fill="none" stroke="#2a1018" strokeWidth="5" />
+                        <motion.circle
+                          cx="50"
+                          cy="50"
+                          r="40"
+                          fill="none"
+                          stroke="#ff3f68"
+                          strokeWidth="5"
+                          strokeLinecap="round"
+                          strokeDasharray="251"
+                          style={{ strokeDashoffset: ringDashoffset }}
+                        />
+                      </svg>
+                      
+                      <button
+                        onPointerDown={(e) => {
+                          e.currentTarget.setPointerCapture(e.pointerId)
+                          startSosHold()
+                        }}
+                        onPointerUp={(e) => {
+                          e.currentTarget.releasePointerCapture(e.pointerId)
+                          cancelSosHold()
+                        }}
+                        onPointerCancel={(e) => {
+                          e.currentTarget.releasePointerCapture(e.pointerId)
+                          cancelSosHold()
+                        }}
+                        onContextMenu={(event) => event.preventDefault()}
+                        className="relative flex h-32 w-32 select-none touch-none flex-col items-center justify-center rounded-full bg-[#ff3f68] text-white shadow-[0_0_40px_rgba(255,63,104,0.3)] transition-transform active:scale-95"
+                        type="button"
+                      >
+                        <BellRing className="h-8 w-8 fill-white" />
+                        <span className="mt-2 text-base font-black tracking-widest">ALERT</span>
+                      </button>
+                    </div>
+
+                    <motion.p className="mt-3 text-center text-xs font-bold text-[#ff3f68]">
+                      {holdTextDisplay}
+                    </motion.p>
+                  </div>
+                )}
+
+                {sosMode === 'sent' ? (
+                  <button onClick={() => setActiveScreen('map')} className="mt-4 -mx-5 bg-red-500 px-5 py-4 text-left text-sm font-semibold leading-5 text-black" type="button">
+                    Help is on the way. SOS sent to {hasContact ? '2' : '0'} contacts in-app. Tap to open Live Map.
+                  </button>
+                ) : null}
+
+                <PhoneNav active={activeScreen} onNavigate={setActiveScreen} />
+              </motion.div>
+
+              <motion.div
+                initial={false}
+                animate={{ opacity: activeScreen === 'map' ? 1 : 0, x: activeScreen === 'map' ? 0 : activeScreen === 'home' ? 26 : -26, scale: activeScreen === 'map' ? 1 : 0.98 }}
+                transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                className={`${activeScreen === 'map' ? 'flex' : 'hidden'} absolute inset-0 flex-col px-5 pt-12 pb-4 text-white`}
+              >
+                <div className="mb-6 flex items-center justify-between border-b border-white/10 pb-5">
+                  <h2 className="text-3xl font-bold tracking-tight">Live Map</h2>
+                  <BellRing className="h-7 w-7 text-white" />
+                </div>
+
+                <div className="rounded-[2rem] border border-white/10 bg-[#101010] p-3 shadow-[0_28px_80px_rgba(219,39,119,0.16)]">
+                  <div className="mb-3 flex items-center gap-2 px-1">
+                    <MapPin className="h-5 w-5 text-pink-500" />
+                    <h3 className="text-lg font-bold tracking-tight">Live map tracking</h3>
+                  </div>
+                  <div className="relative h-[400px] overflow-hidden rounded-[1.5rem] bg-[#ece9e1]">
+                    <div className="absolute inset-0">
+                      <div className="absolute left-8 top-24 h-[3px] w-72 rotate-[30deg] bg-white shadow-[0_0_0_2px_rgba(0,0,0,0.05)]" />
+                      <div className="absolute -left-8 top-56 h-8 w-[28rem] rotate-[8deg] bg-[#eff5b9] shadow-[0_0_0_1px_rgba(0,0,0,0.07)]" />
+                      <div className="absolute left-2 top-72 h-[3px] w-72 -rotate-[18deg] bg-white shadow-[0_0_0_2px_rgba(0,0,0,0.05)]" />
+                      <div className="absolute right-3 top-8 h-[3px] w-64 -rotate-[50deg] bg-white shadow-[0_0_0_2px_rgba(0,0,0,0.05)]" />
+                      <div className="absolute right-16 top-36 h-24 w-16 rounded-sm bg-green-200/90 text-[9px] font-bold leading-3 text-green-950/60">
+                        <span className="absolute left-2 top-8">Gandhi<br />Maidan</span>
+                      </div>
+                      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 280 400" fill="none" aria-hidden="true">
+                        {/* Single Route Shadow/Glow */}
+                        <motion.path
+                          d="M101 320 C128 260 135 190 148 110"
+                          stroke="#ff3f68"
+                          strokeWidth="12"
+                          strokeLinecap="round"
+                          opacity="0.2"
+                        />
+
+                        {/* Static Single Route Base */}
+                        <motion.path
+                          d="M101 320 C128 260 135 190 148 110"
+                          stroke="#ff3f68"
+                          strokeWidth="6"
+                          strokeLinecap="round"
+                          opacity="0.4"
+                        />
+
+                        {/* Animated Flowing Line (Waze style continuous movement) */}
+                        <motion.path
+                          d="M101 320 C128 260 135 190 148 110"
+                          stroke="#ff3f68"
+                          strokeWidth="6"
+                          strokeLinecap="round"
+                          strokeDasharray="20 40"
+                          animate={{ strokeDashoffset: [60, 0] }}
+                          transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                        />
+                        
+                        {/* High-contrast inner dashes for speed illusion */}
+                        <motion.path
+                          d="M101 320 C128 260 135 190 148 110"
+                          stroke="#ffffff"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeDasharray="4 26"
+                          animate={{ strokeDashoffset: [30, 0] }}
+                          transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                        />
+                      </svg>
+                      
+                      {/* Destination Target Marker */}
+                      <div className="absolute left-[108px] top-[70px] flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-500 text-white shadow-lg shadow-rose-950/25">
+                        <ShieldCheck className="h-6 w-6" />
+                      </div>
+                      <motion.div
+                        className="absolute left-[128px] top-[90px] h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full border-[4px] border-[#ff3f68] bg-[#ff3f68]/10 shadow-[0_0_0_8px_rgba(255,63,104,0.15)]"
+                      />
+
+                      {/* Origin Marker (User location) */}
+                      <div className="absolute left-[101px] top-[320px] h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full border-[4px] border-white bg-[#ff3f68] shadow-lg" />
+                    </div>
+                    
+                    <div className="absolute bottom-3 right-3 z-10 rounded-xl bg-neutral-950/80 px-3 py-1.5 text-xs font-bold text-white backdrop-blur">
+                      Walk: 0.5 km  ETA: 5 min
+                    </div>
+
+                    <div className="absolute left-3 top-3 z-10">
+                      <div className="rounded-xl bg-neutral-900 px-3 py-2 text-left text-white shadow-lg ring-2 ring-[#ff3f68]">
+                        <div className="text-[9px] font-bold uppercase tracking-[0.16em] text-[#ff3f68]">Current Route</div>
+                        <div className="mt-0.5">
+                          <span className="block text-sm font-black leading-none text-[#ff3f68]">5 min</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {sosMode === 'sent' ? (
+                    <button className="mt-3 flex w-full items-center justify-center gap-2 rounded-full bg-blue-600 px-4 py-2.5 text-xs font-black text-white animate-pulse" type="button">
+                      <Footprints className="h-4 w-4" />
+                      Contact Dispatcher Officer
                     </button>
-                  </div>
-
-                  <p className="mt-8 text-center text-base font-bold text-white/65">Release before 2 seconds to cancel</p>
-                </div>
-
-                <div className="mt-auto rounded-[2rem] border border-white/10 bg-[#111111] px-6 py-4 shadow-[0_0_45px_rgba(219,39,119,0.18)]">
-                  <div className="grid grid-cols-4 items-center text-white/55">
-                    <div className="relative flex justify-center text-pink-500">
-                      <span className="absolute -top-7 h-4 w-4 rounded-full bg-pink-500 shadow-[0_0_28px_rgba(236,72,153,0.9)]" />
-                      <Home className="h-8 w-8 fill-current" />
-                    </div>
-                    <div className="flex justify-center">
-                      <CircleGauge className="h-7 w-7" />
-                    </div>
-                    <div className="flex justify-center">
-                      <div className="h-9 w-9 rounded-full border-2 border-white/60 bg-pink-200" />
-                    </div>
-                    <div className="flex justify-center">
-                      <SlidersHorizontal className="h-8 w-8" />
-                    </div>
+                  ) : (
+                    <button onClick={() => setActiveScreen('profile')} className="mt-3 flex w-full items-center justify-center gap-2 rounded-full bg-[#ff3f68] px-4 py-2.5 text-xs font-black text-black transition-transform hover:scale-[0.98]" type="button">
+                      <Footprints className="h-4 w-4" />
+                      Show Route in Google Maps
+                    </button>
+                  )}
+                  <div className="mt-4 flex flex-col items-center">
+                    <div className="h-1.5 w-20 rounded-full bg-[#ff3f68]" />
+                    <p className="mt-1.5 text-[10px] text-white/50">Downloading road network...</p>
                   </div>
                 </div>
-              </div>
+
+                <PhoneNav active={activeScreen} onNavigate={setActiveScreen} />
+              </motion.div>
+
+              <motion.div
+                initial={false}
+                animate={{ opacity: activeScreen === 'profile' ? 1 : 0, x: activeScreen === 'profile' ? 0 : 24, scale: activeScreen === 'profile' ? 1 : 0.98 }}
+                transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                className={`${activeScreen === 'profile' ? 'flex' : 'hidden'} absolute inset-0 flex-col px-5 pt-12 pb-4 text-white`}
+              >
+                <div className="mb-5 flex items-center justify-between border-b border-white/10 pb-4">
+                  <h2 className="text-3xl font-bold tracking-tight">Profile</h2>
+                  <BellRing className="h-7 w-7 text-white" />
+                </div>
+
+                <div className="rounded-[2rem] border border-white/10 bg-[#151515] p-4 shadow-[0_28px_80px_rgba(219,39,119,0.14)]">
+                  <div className="flex items-center gap-4">
+                    <div className="relative flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-pink-950/60 text-3xl font-black text-pink-500">
+                      BC
+                      <span className="absolute -right-1 bottom-1 flex h-8 w-8 items-center justify-center rounded-full border-2 border-black bg-pink-600 text-white">
+                        <Camera className="h-4 w-4" />
+                      </span>
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="text-2xl font-black leading-tight tracking-tight">Burning CODM</h3>
+                      <p className="mt-2 text-sm font-bold text-pink-500">@burningcodm</p>
+                      <p className="mt-1 max-w-[10rem] truncate text-sm text-white/55">fbixpro15@gmail.com</p>
+                      <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-white/10 px-3 py-1.5 text-xs font-bold text-white/75">
+                        <UsersRound className="h-4 w-4" />
+                        {hasContact ? '2 contacts' : '0 contacts'}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-4 rounded-[2rem] border border-white/10 bg-[#101010] p-4">
+                  <h3 className="text-xl font-bold tracking-tight">Your Contacts</h3>
+                  <button onClick={() => setHasContact(true)} className="mt-5 flex w-full items-center justify-center gap-3 rounded-2xl bg-pink-600 px-5 py-4 text-lg font-black text-black" type="button">
+                    <Plus className="h-6 w-6" />
+                    Add contact
+                  </button>
+                  {hasContact ? (
+                    <div className="mt-4 space-y-2">
+                      {['Mom', 'Brother'].map((name) => (
+                        <div key={name} className="flex items-center justify-between rounded-2xl bg-white/[0.06] px-4 py-3 ring-1 ring-white/10">
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-pink-950/70 text-sm font-black text-pink-400">{name[0]}</div>
+                            <div>
+                              <p className="text-sm font-bold">{name}</p>
+                              <p className="text-xs text-white/45">SOS contact</p>
+                            </div>
+                          </div>
+                          <span className="h-2.5 w-2.5 rounded-full bg-pink-500" />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="mt-5 text-base text-white/55">No primary contacts saved yet.</p>
+                  )}
+                </div>
+
+                <PhoneNav active={activeScreen} onNavigate={setActiveScreen} />
+              </motion.div>
             </div>
           </motion.div>
         </div>
       </div>
     </Card>
+  )
+}
+
+function PhoneNav({ active, onNavigate }: { active: AppScreen; onNavigate: (screen: AppScreen) => void }) {
+  return (
+    <div className="relative mt-auto h-[5rem] -mx-1">
+      {/* Background with rounded notch */}
+      <svg className="absolute inset-0 h-full w-full" preserveAspectRatio="none" viewBox="0 0 300 70">
+        <path
+          d={
+            active === 'home'
+              ? 'M 0 35 C 0 20 10 15 20 15 L 25 15 C 38 15 45 32 60 32 C 75 32 82 15 95 15 L 280 15 C 290 15 300 20 300 35 L 300 70 L 0 70 Z'
+              : active === 'map'
+              ? 'M 0 35 C 0 20 10 15 20 15 L 100 15 C 113 15 120 32 135 32 C 150 32 157 15 170 15 L 280 15 C 290 15 300 20 300 35 L 300 70 L 0 70 Z'
+              : 'M 0 35 C 0 20 10 15 20 15 L 175 15 C 188 15 195 32 210 32 C 225 32 232 15 245 15 L 280 15 C 290 15 300 20 300 35 L 300 70 L 0 70 Z'
+          }
+          fill="#111111"
+          stroke="rgba(255,255,255,0.08)"
+          strokeWidth="1"
+          className="transition-all duration-500 ease-in-out"
+        />
+      </svg>
+      
+      <div className="relative flex h-full items-end justify-around pb-4 px-2 text-white/55">
+        <button type="button" onClick={() => onNavigate('home')} className={`relative flex w-16 justify-center transition-colors duration-300 ${active === 'home' ? 'text-[#ff3f68]' : 'hover:text-white'}`}>
+          <Home className="h-7 w-7" />
+          <motion.div
+            initial={false}
+            animate={{ opacity: active === 'home' ? 1 : 0, scale: active === 'home' ? 1 : 0.5, y: active === 'home' ? 0 : 10 }}
+            className="absolute -top-7 h-3.5 w-3.5 rounded-full bg-[#ff3f68] shadow-[0_0_15px_rgba(255,63,104,0.8)]"
+          />
+        </button>
+        <button type="button" onClick={() => onNavigate('map')} className={`relative flex w-16 justify-center transition-colors duration-300 ${active === 'map' ? 'text-[#ff3f68]' : 'hover:text-white'}`}>
+          <Compass className="h-7 w-7" />
+          <motion.div
+            initial={false}
+            animate={{ opacity: active === 'map' ? 1 : 0, scale: active === 'map' ? 1 : 0.5, y: active === 'map' ? 0 : 10 }}
+            className="absolute -top-7 h-3.5 w-3.5 rounded-full bg-[#ff3f68] shadow-[0_0_15px_rgba(255,63,104,0.8)]"
+          />
+        </button>
+        <button type="button" onClick={() => onNavigate('profile')} className={`relative flex w-16 justify-center transition-colors duration-300 ${active === 'profile' ? 'text-[#ff3f68]' : 'hover:text-white'}`}>
+          <Circle className="h-7 w-7" />
+          <motion.div
+            initial={false}
+            animate={{ opacity: active === 'profile' ? 1 : 0, scale: active === 'profile' ? 1 : 0.5, y: active === 'profile' ? 0 : 10 }}
+            className="absolute -top-7 h-3.5 w-3.5 rounded-full bg-[#ff3f68] shadow-[0_0_15px_rgba(255,63,104,0.8)]"
+          />
+        </button>
+        <button type="button" onClick={() => onNavigate('profile')} className="flex w-16 justify-center transition hover:text-white">
+          <SlidersHorizontal className="h-7 w-7" />
+        </button>
+      </div>
+    </div>
   )
 }

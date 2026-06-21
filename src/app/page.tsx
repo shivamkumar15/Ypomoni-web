@@ -1,7 +1,7 @@
 import { SplineSceneBasic } from '@/components/demo'
 import { Logo } from '@/components/logo'
 import { SkiperTextRevealH } from '@/components/v1/skiper72'
-import { BellRing, Clock3, ContactRound, LocateFixed, MapPinned, MessageCircleWarning, ShieldCheck, Siren } from 'lucide-react'
+import { BellRing, Camera, Clock3, ContactRound, Footprints, LocateFixed, MapPinned, MessageCircleWarning, Plus, ShieldCheck, Siren, UsersRound } from 'lucide-react'
 
 const features = [
   {
@@ -11,13 +11,13 @@ const features = [
   },
   {
     icon: LocateFixed,
-    title: 'Live location inside the app',
-    description: 'Contacts see where the user is moving in real time, not just where the alert started.',
+    title: 'Live Map tracking',
+    description: 'The map view shows the active route, distance, ETA, and smooth alternative-route transitions for fast response.',
   },
   {
     icon: ContactRound,
-    title: 'Emergency contact setup',
-    description: 'Users can add trusted people who receive SOS alerts, location updates, and important context.',
+    title: 'Profile contact setup',
+    description: 'The profile screen gives users a dedicated place to add trusted contacts before an emergency happens.',
   },
   {
     icon: BellRing,
@@ -39,8 +39,8 @@ const steps = [
   },
   {
     icon: MapPinned,
-    title: 'Live location opens',
-    copy: 'The mobile app shows the user’s live location so help can follow movement in real time.',
+    title: 'Live Map opens',
+    copy: 'The app switches to a route-focused map with distance, ETA, alternative routes, and a Google Maps handoff for navigation.',
   },
 ]
 
@@ -75,8 +75,8 @@ export default function Home() {
                 A safety app people can understand under pressure.
               </h2>
             </div>
-            <p className="max-w-2xl text-lg leading-8 text-neutral-600 lg:ml-auto">
-              Ypomoni keeps the emergency flow simple: confirm the SOS, notify the right people, and make the user’s location visible in the mobile app immediately.
+              <p className="max-w-2xl text-lg leading-8 text-neutral-600 lg:ml-auto">
+              Ypomoni keeps the emergency flow simple: confirm the SOS, notify the right people, open the Live Map, and let users manage their safety circle from Profile.
             </p>
           </div>
 
@@ -136,32 +136,74 @@ export default function Home() {
       </section>
 
       <section id="contacts" className="bg-[#fff8fb] px-6 py-24 md:px-10 lg:px-12">
-        <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[1fr_0.9fr] lg:items-center">
+        <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-pink-700">Emergency contacts</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-pink-700">Map and contacts</p>
             <h2 className="mt-4 text-balance text-4xl font-semibold tracking-[-0.04em] text-neutral-950 md:text-6xl">
-              Trusted people are ready before anything happens.
+              The real app screens are built into the story.
             </h2>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-neutral-600">
-              The app includes a dedicated contact section where users can add family, friends, roommates, or guardians. When SOS is activated, those contacts receive the emergency signal and can view the live location from the mobile app.
+              The landing page now reflects the actual Live Map and Profile flows: users can see animated route options after SOS and add trusted contacts from a focused profile screen.
             </p>
           </div>
 
-          <div className="rounded-[2.2rem] border border-pink-100 bg-white p-5 shadow-2xl shadow-pink-950/10">
-            <div className="rounded-[1.7rem] bg-neutral-950 p-5 text-white">
-              <div className="mb-6 flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-pink-200">Contact center</p>
-                  <p className="mt-1 text-2xl font-semibold tracking-tight">Your safety circle</p>
+          <div className="grid gap-5">
+            <div className="rounded-[2rem] border border-neutral-200 bg-white p-5 shadow-xl shadow-pink-950/5">
+              <div className="rounded-[1.5rem] bg-neutral-950 p-5 text-white">
+                <div className="mb-4 flex items-center gap-3">
+                  <MapPinned className="h-7 w-7 text-pink-400" />
+                  <h3 className="text-2xl font-bold tracking-tight">Live map tracking</h3>
                 </div>
-                <ShieldCheck className="h-7 w-7 text-pink-300" />
+                <div className="relative h-56 overflow-hidden rounded-[1.25rem] bg-[#ece9e1]">
+                  <div className="absolute -left-8 top-32 h-7 w-[28rem] rotate-[8deg] bg-[#eff5b9]" />
+                  <div className="absolute left-8 top-16 h-[3px] w-80 rotate-[30deg] bg-white shadow-[0_0_0_2px_rgba(0,0,0,0.05)]" />
+                  <div className="absolute right-16 top-16 h-20 w-16 bg-green-200/90" />
+                  <svg className="absolute inset-0 h-full w-full" viewBox="0 0 420 224" fill="none" aria-hidden="true">
+                    <path d="M158 172 C190 130 204 96 218 42" stroke="#ec1380" strokeWidth="9" strokeLinecap="round" />
+                    <path d="M158 172 C220 144 252 106 282 62" stroke="#ec1380" strokeWidth="6" strokeLinecap="round" opacity="0.45" />
+                    <path d="M158 172 C134 136 132 98 160 48" stroke="#6b7280" strokeWidth="5" strokeLinecap="round" strokeDasharray="7 10" opacity="0.55" />
+                  </svg>
+                  <div className="absolute left-[140px] top-[154px] flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-500 text-white">
+                    <ShieldCheck className="h-6 w-6" />
+                  </div>
+                  <div className="absolute left-[204px] top-[30px] h-10 w-10 rounded-full border-[5px] border-pink-500 bg-pink-200" />
+                  <div className="absolute bottom-4 right-4 rounded-2xl bg-neutral-950/75 px-4 py-2 text-sm font-bold text-white">Walk: 0.5 km&nbsp;&nbsp; ETA: 5 min</div>
+                </div>
+                <div className="mt-4 grid grid-cols-3 gap-2 text-center text-xs font-black">
+                  <div className="rounded-2xl bg-pink-600 px-3 py-3 text-black">Current<br />5 min</div>
+                  <div className="rounded-2xl bg-white/10 px-3 py-3 text-white">Fastest<br />4 min</div>
+                  <div className="rounded-2xl bg-white/10 px-3 py-3 text-white">Safest<br />6 min</div>
+                </div>
+                <div className="mt-3 flex items-center justify-center gap-3 rounded-full bg-pink-600 px-5 py-4 text-sm font-black text-black">
+                  <Footprints className="h-5 w-5" />
+                  Show Route in Google Maps
+                </div>
               </div>
-              {['Add trusted contact', 'Choose alert permissions', 'Share SOS and live location'].map((item, index) => (
-                <div key={item} className="mb-3 flex items-center gap-4 rounded-2xl bg-white/[0.07] p-4 ring-1 ring-white/10 last:mb-0">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-500 text-sm font-bold">{index + 1}</div>
-                  <p className="font-semibold">{item}</p>
+            </div>
+
+            <div className="rounded-[2rem] border border-neutral-200 bg-white p-5 shadow-xl shadow-pink-950/5">
+              <div className="rounded-[1.5rem] bg-neutral-950 p-5 text-white">
+                <div className="mb-6 flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-pink-200">Profile</p>
+                  <p className="mt-1 text-2xl font-semibold tracking-tight">Burning CODM</p>
                 </div>
-              ))}
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-pink-600 text-white">
+                  <Camera className="h-6 w-6" />
+                </div>
+                </div>
+                <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.04] p-4">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-sm font-bold text-white/75">
+                    <UsersRound className="h-4 w-4" />
+                    0 contacts
+                  </div>
+                  <div className="mt-5 flex items-center justify-center gap-3 rounded-2xl bg-pink-600 px-5 py-4 text-lg font-black text-black">
+                    <Plus className="h-6 w-6" />
+                    Add contact
+                  </div>
+                  <p className="mt-5 text-white/55">No primary contacts saved yet.</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -169,7 +211,7 @@ export default function Home() {
 
       <section className="w-full bg-white">
         <SkiperTextRevealH>
-          {`Ypomoni turns emergency response into a clear mobile flow: hold SOS for 3 seconds, send an urgent signal, share live location, and keep trusted contacts connected when fast action matters most.`}
+          {`Ypomoni turns emergency response into a clear mobile flow: hold SOS for 3 seconds, open the Live Map with route and ETA, and keep trusted contacts ready from Profile when fast action matters most.`}
         </SkiperTextRevealH>
       </section>
 
