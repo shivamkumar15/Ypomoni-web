@@ -18,7 +18,7 @@ interface RevealWordProps {
 
 function RevealWord({ word, index, total, progress }: RevealWordProps) {
   const animationEnd = 0.8
-  const duration = 0.2 
+  const duration = 0.2
   
   const start = index * ((animationEnd - duration) / Math.max(total - 1, 1))
   const end = start + duration
@@ -37,7 +37,7 @@ function RevealWord({ word, index, total, progress }: RevealWordProps) {
   return (
     <motion.span
       style={{ opacity, y }}
-      className="inline-block mr-[0.25em] text-pink-700"
+      className="mr-[0.25em] inline-block text-neutral-950"
     >
       {word}
     </motion.span>
@@ -59,11 +59,12 @@ export function SkiperTextRevealH({ children, className }: SkiperTextRevealHProp
     .filter(Boolean)
 
   return (
-    <div ref={containerRef} className="relative h-[250vh] w-full bg-neutral-50">
+    <div ref={containerRef} className="relative h-[220vh] w-full bg-white">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-[#fff8fb] to-transparent" />
       <div className="sticky top-0 flex min-h-screen w-full items-center justify-center px-6 py-24 md:px-24">
         <p
           className={cn(
-            'w-full max-w-5xl text-center md:text-left font-medium leading-[1.4] tracking-tight text-pink-700 text-[clamp(1.2rem,4vw,3.5rem)]',
+            'w-full max-w-6xl text-center font-semibold leading-[1.18] tracking-[-0.055em] text-neutral-950 md:text-left text-[clamp(2rem,5.4vw,5.6rem)]',
             className
           )}
         >

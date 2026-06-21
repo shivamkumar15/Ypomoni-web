@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: #fafafa;
+}
+
+::selection {
+  background: #be185d;
+  color: #ffffff;
+}
+
 .loader {
   width: 48px;
   height: 48px;

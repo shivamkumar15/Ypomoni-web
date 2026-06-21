@@ -1,12 +1,12 @@
 import { ReactNode } from 'react'
-import { JetBrains_Mono } from 'next/font/google'
+import { Inter } from 'next/font/google'
 import './globals.css'
 
-const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'] })
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: 'Ypomoni',
-  description: 'Interactive 3D experiences by Ypomoni',
+  title: 'Ypomoni | SOS Safety App',
+  description: 'Advertisement website for a safety app with 3-second SOS alerts, live location sharing, and emergency contact setup.',
   icons: {
     icon: '/logo.svg',
     shortcut: '/logo.svg',
@@ -17,7 +17,7 @@ export const metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body className={jetbrainsMono.className}>{children}</body>
+      <body className={`${inter.className} antialiased`}>{children}</body>
     </html>
   )
 }
