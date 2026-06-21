@@ -1,6 +1,5 @@
 import { SplineSceneBasic } from '@/components/demo'
 import { Logo } from '@/components/logo'
-import { ScrollShowcase } from '@/components/scroll-showcase'
 import { SkiperTextRevealH } from '@/components/v1/skiper72'
 import { BellRing, Clock3, ContactRound, LocateFixed, MapPinned, MessageCircleWarning, ShieldCheck, Siren } from 'lucide-react'
 
@@ -66,8 +65,6 @@ export default function Home() {
       <section className="min-h-screen w-full">
         <SplineSceneBasic />
       </section>
-
-      <ScrollShowcase />
 
       <section id="features" className="border-y border-neutral-200 bg-white px-6 py-24 md:px-10 lg:px-12">
         <div className="mx-auto max-w-7xl">

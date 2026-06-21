@@ -1,15 +1,9 @@
 'use client'
 
 import { Card } from '@/components/ui/card'
-import { Check, ChevronRight, Clock3, MapPin, Phone, Plus, ShieldCheck, Siren, UsersRound } from 'lucide-react'
+import { BellRing, ChevronRight, CircleGauge, Home, ShieldCheck, SlidersHorizontal } from 'lucide-react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
-
-const contacts = [
-  { name: 'Maya', role: 'Sister', status: 'Alerted' },
-  { name: 'Sam', role: 'Roommate', status: 'Tracking' },
-  { name: 'Dad', role: 'Family', status: 'Ready' },
-]
 
 export function SplineSceneBasic() {
   const sectionRef = useRef<HTMLDivElement>(null)
@@ -21,10 +15,6 @@ export function SplineSceneBasic() {
   const phoneRotateX = useTransform(scrollYProgress, [0, 1], [9, -7])
   const phoneRotateY = useTransform(scrollYProgress, [0, 1], [-13, 11])
   const phoneY = useTransform(scrollYProgress, [0, 1], [0, -120])
-  const rearPhoneY = useTransform(scrollYProgress, [0, 1], [40, -70])
-  const rearPhoneRotate = useTransform(scrollYProgress, [0, 1], [8, -4])
-  const cardLeftY = useTransform(scrollYProgress, [0, 1], [20, -90])
-  const cardRightY = useTransform(scrollYProgress, [0, 1], [80, -130])
   const glowScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.9, 1.25, 1])
   const sosProgress = useTransform(scrollYProgress, [0, 0.65], ['18%', '100%'])
 
@@ -101,36 +91,6 @@ export function SplineSceneBasic() {
         </div>
 
         <div className="relative flex min-h-[720px] w-full items-center justify-center [perspective:1400px]">
-          <motion.div style={{ y: cardLeftY, rotateY: -18, rotateX: 8 }} className="absolute left-2 top-12 hidden w-56 rounded-3xl border border-pink-100 bg-white/85 p-4 shadow-xl shadow-pink-950/10 backdrop-blur lg:block">
-            <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-pink-50 text-pink-700">
-                <Clock3 className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-neutral-950">Hold detected</p>
-                <p className="text-xs text-neutral-500">SOS sends after 3 sec</p>
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.div style={{ y: cardRightY, rotateY: 18, rotateX: 7 }} className="absolute bottom-16 right-0 hidden w-64 rounded-3xl border border-neutral-200 bg-white/90 p-4 shadow-xl shadow-neutral-950/10 backdrop-blur lg:block">
-            <div className="mb-3 flex items-center justify-between">
-              <p className="text-sm font-semibold text-neutral-950">Emergency contacts</p>
-              <UsersRound className="h-4 w-4 text-pink-700" />
-            </div>
-            <div className="space-y-2">
-              {contacts.slice(0, 2).map((contact) => (
-                <div key={contact.name} className="flex items-center justify-between rounded-2xl bg-neutral-50 px-3 py-2">
-                  <div>
-                    <p className="text-sm font-semibold text-neutral-950">{contact.name}</p>
-                    <p className="text-xs text-neutral-500">{contact.role}</p>
-                  </div>
-                  <Check className="h-4 w-4 text-emerald-600" />
-                </div>
-              ))}
-            </div>
-          </motion.div>
-
           <motion.div
             style={{ rotateX: phoneRotateX, rotateY: phoneRotateY, y: phoneY, transformStyle: 'preserve-3d' }}
             className="relative h-[630px] w-[314px] rounded-[3.4rem] border-[10px] border-neutral-950 bg-neutral-950 shadow-[0_35px_90px_rgba(17,24,39,0.28)] md:h-[690px] md:w-[342px]"
@@ -140,102 +100,51 @@ export function SplineSceneBasic() {
             </div>
 
             <div className="relative h-full overflow-hidden rounded-[2.7rem] bg-neutral-950">
-              <div className="absolute inset-0 bg-[#120b16]" />
-              <div className="relative flex h-full flex-col px-5 pt-12 pb-5 text-white">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-pink-200">Ypomoni</p>
-                    <p className="mt-1 text-xl font-semibold tracking-tight">Safety ready</p>
-                  </div>
-                  <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/15">
-                    <ShieldCheck className="h-5 w-5 text-pink-200" />
-                  </div>
+              <div className="absolute inset-0 bg-black" />
+              <div className="relative flex h-full flex-col px-5 pt-12 pb-4 text-white">
+                <div className="mb-6 flex items-center justify-between border-b border-white/10 pb-5">
+                  <h2 className="text-3xl font-bold tracking-tight">Home</h2>
+                  <BellRing className="h-7 w-7 text-white" />
                 </div>
 
-                <div className="mt-7 rounded-[2rem] border border-white/10 bg-white/[0.08] p-4 shadow-2xl shadow-black/20 backdrop-blur">
-                  <div className="mb-4 flex items-center justify-between">
-                    <div>
-                      <p className="text-xs font-medium text-white/55">Current location</p>
-                      <p className="mt-1 text-sm font-semibold">Live map active</p>
-                    </div>
-                    <span className="rounded-full bg-emerald-400/15 px-2.5 py-1 text-xs font-semibold text-emerald-200">Sharing</span>
+                <div className="rounded-[2rem] border border-white/10 bg-[#141414] px-5 py-8 shadow-[0_28px_80px_rgba(219,39,119,0.16)]">
+                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-pink-950/50 text-pink-400">
+                    <ShieldCheck className="h-8 w-8" />
                   </div>
-                  <div className="relative h-44 overflow-hidden rounded-[1.4rem] bg-[#18181b]">
-                    <div className="absolute left-5 top-8 h-1 w-40 rotate-12 rounded-full bg-white/10" />
-                    <div className="absolute right-4 top-20 h-1 w-36 -rotate-12 rounded-full bg-white/10" />
-                    <div className="absolute bottom-10 left-8 h-1 w-32 rotate-6 rounded-full bg-white/10" />
-                    <div className="absolute left-8 top-8 h-24 w-24 rounded-full border border-pink-300/25" />
-                    <div className="absolute bottom-6 right-5 h-28 w-28 rounded-full border border-white/10" />
-                    <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center">
-                      <motion.span animate={{ scale: [1, 1.55, 1], opacity: [0.7, 0, 0.7] }} transition={{ duration: 2.4, repeat: Infinity, ease: 'easeOut' }} className="absolute h-24 w-24 rounded-full bg-pink-400/20" />
-                      <span className="absolute h-16 w-16 rounded-full bg-pink-400/15" />
-                      <div className="relative flex h-12 w-12 items-center justify-center rounded-full bg-pink-500 shadow-[0_0_36px_rgba(236,72,153,0.55)]">
-                        <MapPin className="h-6 w-6" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                  <h3 className="mt-7 text-center text-3xl font-bold tracking-tight">Emergency Alert</h3>
+                  <p className="mx-auto mt-4 max-w-[15rem] text-center text-sm leading-6 text-white/55">
+                    Press and hold to trigger an emergency alert instantly.
+                  </p>
 
-                <div className="mt-5 grid grid-cols-3 gap-2">
-                  {[1, 2, 3].map((second) => (
-                    <div key={second} className="rounded-2xl bg-white/[0.08] p-3 text-center ring-1 ring-white/10">
-                      <p className="text-lg font-semibold">{second}</p>
-                      <p className="text-[10px] uppercase tracking-wide text-white/45">sec</p>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-auto">
-                  <div className="mb-4 rounded-[1.7rem] bg-white p-3 text-neutral-950 shadow-2xl">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-pink-50 text-pink-700">
-                        <Siren className="h-5 w-5" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-semibold">SOS signal sent</p>
-                        <p className="truncate text-xs text-neutral-500">Live location shared with 3 contacts</p>
-                      </div>
-                    </div>
+                  <div className="relative mx-auto mt-11 flex h-56 w-56 items-center justify-center rounded-full bg-pink-950/30 shadow-[0_0_70px_rgba(219,39,119,0.26)]">
+                    <motion.span animate={{ scale: [1, 1.08, 1] }} transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }} className="absolute h-48 w-48 rounded-full border border-pink-500/20" />
+                    <motion.span animate={{ scale: [1, 1.16, 1], opacity: [0.8, 0.35, 0.8] }} transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }} className="absolute h-40 w-40 rounded-full border border-pink-500/30" />
+                    <button className="relative flex h-36 w-36 flex-col items-center justify-center rounded-full bg-pink-600 text-white shadow-[0_22px_70px_rgba(219,39,119,0.5)]" type="button">
+                      <BellRing className="h-11 w-11" />
+                      <span className="mt-3 text-xl font-black tracking-[0.22em]">ALERT</span>
+                    </button>
                   </div>
 
-                  <button className="flex h-24 w-full items-center justify-center rounded-[2rem] bg-pink-600 text-2xl font-black tracking-[0.28em] text-white shadow-[0_18px_50px_rgba(219,39,119,0.45)] ring-8 ring-pink-500/15 transition hover:bg-pink-500" type="button">
-                    SOS
-                  </button>
-                  <p className="mt-3 text-center text-xs font-medium text-white/55">Press and hold for 3 seconds</p>
+                  <p className="mt-8 text-center text-base font-bold text-white/65">Release before 2 seconds to cancel</p>
                 </div>
-              </div>
-            </div>
-          </motion.div>
 
-          <motion.div style={{ y: rearPhoneY, rotate: rearPhoneRotate, rotateY: 24, transformStyle: 'preserve-3d' }} className="absolute -right-2 top-24 hidden h-[520px] w-[252px] rounded-[3rem] border-[8px] border-neutral-900 bg-white shadow-2xl shadow-neutral-950/20 md:block">
-            <div className="h-full overflow-hidden rounded-[2.35rem] bg-white px-4 pt-9 pb-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-pink-700">Contacts</p>
-                  <p className="text-lg font-semibold tracking-tight text-neutral-950">Emergency list</p>
-                </div>
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-pink-600 text-white">
-                  <Plus className="h-4 w-4" />
-                </div>
-              </div>
-              <div className="mt-5 space-y-3">
-                {contacts.map((contact) => (
-                  <div key={contact.name} className="rounded-3xl border border-neutral-200 bg-neutral-50 p-3">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-950 text-sm font-semibold text-white">
-                        {contact.name[0]}
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-neutral-950">{contact.name}</p>
-                        <p className="text-xs text-neutral-500">{contact.role}</p>
-                      </div>
+                <div className="mt-auto rounded-[2rem] border border-white/10 bg-[#111111] px-6 py-4 shadow-[0_0_45px_rgba(219,39,119,0.18)]">
+                  <div className="grid grid-cols-4 items-center text-white/55">
+                    <div className="relative flex justify-center text-pink-500">
+                      <span className="absolute -top-7 h-4 w-4 rounded-full bg-pink-500 shadow-[0_0_28px_rgba(236,72,153,0.9)]" />
+                      <Home className="h-8 w-8 fill-current" />
                     </div>
-                    <div className="mt-3 flex items-center justify-between rounded-2xl bg-white px-3 py-2 text-xs font-semibold text-neutral-600">
-                      <span>{contact.status}</span>
-                      <Phone className="h-3.5 w-3.5 text-pink-700" />
+                    <div className="flex justify-center">
+                      <CircleGauge className="h-7 w-7" />
+                    </div>
+                    <div className="flex justify-center">
+                      <div className="h-9 w-9 rounded-full border-2 border-white/60 bg-pink-200" />
+                    </div>
+                    <div className="flex justify-center">
+                      <SlidersHorizontal className="h-8 w-8" />
                     </div>
                   </div>
-                ))}
+                </div>
               </div>
             </div>
           </motion.div>
