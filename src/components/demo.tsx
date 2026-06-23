@@ -1,8 +1,8 @@
 'use client'
 
 import { Card } from '@/components/ui/card'
-import { BellRing, Camera, ChevronRight, Circle, Compass, Footprints, Home, MapPin, Plus, ShieldCheck, SlidersHorizontal, UserRound, UsersRound } from 'lucide-react'
-import { animate, motion, useScroll, useTransform, useMotionValue, useMotionTemplate } from 'framer-motion'
+import { anime, animeValue, setAnimeStyles } from '@/lib/anime'
+import { BellRing, Camera, ChevronRight, Circle, Compass, Footprints, Home, MapPin, Plus, ShieldCheck, SlidersHorizontal, UsersRound } from 'lucide-react'
 import { useRef, useState, useEffect } from 'react'
 
 type AppScreen = 'home' | 'map' | 'profile'
@@ -10,28 +10,41 @@ type SosMode = 'idle' | 'holding' | 'sent'
 
 export function SplineSceneBasic() {
   const sectionRef = useRef<HTMLDivElement>(null)
+  const glowRef = useRef<HTMLDivElement>(null)
+  const floatCardRef = useRef<HTMLDivElement>(null)
+  const floatOrbRef = useRef<HTMLDivElement>(null)
+  const scrollProgressRef = useRef<HTMLDivElement>(null)
+  const phoneRef = useRef<HTMLDivElement>(null)
+  const homeScreenRef = useRef<HTMLDivElement>(null)
+  const mapScreenRef = useRef<HTMLDivElement>(null)
+  const profileScreenRef = useRef<HTMLDivElement>(null)
+  const ringRef = useRef<SVGCircleElement>(null)
+  const routeFlowRef = useRef<SVGPathElement>(null)
+  const routeDashRef = useRef<SVGPathElement>(null)
+  const targetPulseRef = useRef<HTMLDivElement>(null)
   const holdTimerRef = useRef<number | null>(null)
+  const holdAnimationRef = useRef<{ cancel: () => void } | null>(null)
   const [activeScreen, setActiveScreen] = useState<AppScreen>('home')
   const [sosMode, setSosMode] = useState<SosMode>('idle')
   const [hasContact, setHasContact] = useState(false)
-  const holdValue = useMotionValue(0)
-  
-  const ringDashoffset = useTransform(holdValue, [0, 2000], [251, 0])
-  const holdTextDisplay = useTransform(holdValue, (v) => `Hold... ${(v / 1000).toFixed(1)}s / 2.0s`)
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start start', 'end start'],
-  })
+  const [holdTextDisplay, setHoldTextDisplay] = useState('Hold... 0.0s / 2.0s')
 
   const startSosHold = () => {
     if (sosMode === 'sent') return
     setSosMode('holding')
-    holdValue.set(0)
-    
-    animate(holdValue, 2000, {
-      duration: 2,
-      ease: 'linear',
+    holdAnimationRef.current?.cancel()
+    setAnimeStyles(ringRef.current, { strokeDashoffset: 251 })
+    setHoldTextDisplay('Hold... 0.0s / 2.0s')
+
+    holdAnimationRef.current = animeValue({
+      from: 0,
+      to: 2000,
+      duration: 2000,
+      easing: 'linear',
+      update: (value) => {
+        setAnimeStyles(ringRef.current, { strokeDashoffset: 251 - (value / 2000) * 251 })
+        setHoldTextDisplay(`Hold... ${(value / 1000).toFixed(1)}s / 2.0s`)
+      },
     })
     
     holdTimerRef.current = window.setTimeout(() => {
@@ -45,7 +58,9 @@ export function SplineSceneBasic() {
       holdTimerRef.current = null
     }
 
-    animate(holdValue, 0, { duration: 0.2 })
+    holdAnimationRef.current?.cancel()
+    anime({ targets: ringRef.current, strokeDashoffset: [Number(ringRef.current?.style.strokeDashoffset) || 251, 251], duration: 220 })
+    setHoldTextDisplay('Hold... 0.0s / 2.0s')
     setSosMode((mode) => (mode === 'holding' ? 'idle' : mode))
   }
 
@@ -55,29 +70,73 @@ export function SplineSceneBasic() {
   }
 
   useEffect(() => {
+    const floatingCard = anime({ targets: floatCardRef.current, translateY: [0, -18], rotate: [0, 2], duration: 3500, easing: 'easeInOutSine', loop: true, direction: 'alternate' })
+    const floatingOrb = anime({ targets: floatOrbRef.current, translateY: [0, 22], rotate: [0, -3], duration: 4000, easing: 'easeInOutSine', loop: true, direction: 'alternate' })
+    const routeFlow = anime({ targets: routeFlowRef.current, strokeDashoffset: [60, 0], duration: 1500, easing: 'linear', loop: true })
+    const routeDash = anime({ targets: routeDashRef.current, strokeDashoffset: [30, 0], duration: 1500, easing: 'linear', loop: true })
+    const targetPulse = anime({ targets: targetPulseRef.current, scale: [0.86, 1.18], opacity: [0.8, 0.35], duration: 1250, easing: 'easeInOutSine', loop: true, direction: 'alternate' })
+
     return () => {
       if (holdTimerRef.current) window.clearTimeout(holdTimerRef.current)
+      holdAnimationRef.current?.cancel()
+      floatingCard.cancel()
+      floatingOrb.cancel()
+      routeFlow.cancel()
+      routeDash.cancel()
+      targetPulse.cancel()
     }
   }, [])
 
-  const phoneY = useTransform(scrollYProgress, [0, 1], [0, -60])
-  const glowScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.9, 1.25, 1])
-  const sosProgress = useTransform(scrollYProgress, [0, 0.65], ['18%', '100%'])
+  useEffect(() => {
+    const updateScrollAnimation = () => {
+      const section = sectionRef.current
+      if (!section) return
+
+      const rect = section.getBoundingClientRect()
+      const travel = Math.max(rect.height - window.innerHeight, 1)
+      const progress = Math.min(Math.max(-rect.top / travel, 0), 1)
+      const glowScale = progress < 0.5 ? 0.9 + progress * 0.7 : 1.25 - (progress - 0.5) * 0.5
+      const phoneLift = -260 * progress
+      const phoneDrift = 72 * Math.sin(progress * Math.PI)
+      const phoneDepth = 120 * progress
+      const phonePitch = -18 * progress
+      const phoneTurn = -10 + 20 * progress
+      const phoneRoll = 4 * Math.sin(progress * Math.PI * 1.25)
+
+      setAnimeStyles(phoneRef.current, {
+        transform: `translate3d(${phoneDrift}px, ${phoneLift}px, ${phoneDepth}px) rotateX(${phonePitch}deg) rotateY(${phoneTurn}deg) rotateZ(${phoneRoll}deg)`,
+      })
+      setAnimeStyles(glowRef.current, { transform: `translateX(-50%) scale(${glowScale})` })
+      setAnimeStyles(scrollProgressRef.current, { width: `${Math.min(18 + (progress / 0.65) * 82, 100)}%` })
+    }
+
+    updateScrollAnimation()
+    window.addEventListener('scroll', updateScrollAnimation, { passive: true })
+    window.addEventListener('resize', updateScrollAnimation)
+
+    return () => {
+      window.removeEventListener('scroll', updateScrollAnimation)
+      window.removeEventListener('resize', updateScrollAnimation)
+    }
+  }, [])
+
+  useEffect(() => {
+    const screen = activeScreen === 'home' ? homeScreenRef.current : activeScreen === 'map' ? mapScreenRef.current : profileScreenRef.current
+    anime({ targets: screen, opacity: [0, 1], translateX: activeScreen === 'home' ? [-22, 0] : [24, 0], scale: [0.98, 1], duration: 620, easing: 'easeOutExpo' })
+  }, [activeScreen])
 
   return (
     <Card ref={sectionRef} className="relative min-h-[165vh] w-full overflow-hidden rounded-none border-0 bg-[#fff8fb] shadow-none">
       <div className="absolute inset-0 bg-[#fff8fb]" />
-      <motion.div style={{ scale: glowScale }} className="absolute left-1/2 top-24 h-72 w-72 -translate-x-1/2 rounded-full bg-pink-200/25 blur-3xl" />
-      <motion.div
+      <div ref={glowRef} className="absolute left-1/2 top-24 h-72 w-72 -translate-x-1/2 rounded-full bg-pink-200/25 blur-3xl" />
+      <div
+        ref={floatCardRef}
         aria-hidden="true"
-        animate={{ y: [0, -18, 0], rotate: [0, 2, 0] }}
-        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
         className="absolute left-[8%] top-[30%] hidden h-28 w-28 rounded-[2rem] border border-pink-200 bg-white/50 shadow-xl shadow-pink-950/5 backdrop-blur md:block"
       />
-      <motion.div
+      <div
+        ref={floatOrbRef}
         aria-hidden="true"
-        animate={{ y: [0, 22, 0], rotate: [0, -3, 0] }}
-        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
         className="absolute right-[9%] top-[22%] hidden h-36 w-36 rounded-full border border-neutral-200 bg-white/45 shadow-xl shadow-neutral-950/5 backdrop-blur md:block"
       />
 
@@ -102,7 +161,7 @@ export function SplineSceneBasic() {
               <span>3 sec</span>
             </div>
             <div className="h-2 overflow-hidden rounded-full bg-neutral-200">
-              <motion.div style={{ width: sosProgress }} className="h-full rounded-full bg-pink-600" />
+              <div ref={scrollProgressRef} className="h-full w-[18%] rounded-full bg-pink-600" />
             </div>
           </div>
 
@@ -136,10 +195,10 @@ export function SplineSceneBasic() {
           </div>
         </div>
 
-        <div className="relative flex min-h-[760px] w-full items-start justify-center pt-4 [perspective:1400px] md:sticky md:top-10">
-          <motion.div
-            style={{ y: phoneY }}
-            className="relative h-[660px] w-[320px] rounded-[3.4rem] border-[10px] border-neutral-950 bg-neutral-950 shadow-[0_35px_90px_rgba(17,24,39,0.22)] md:h-[720px] md:w-[342px]"
+        <div className="relative flex min-h-[760px] w-full items-start justify-center pt-4 [perspective:1600px] [transform-style:preserve-3d] md:sticky md:top-10">
+          <div
+            ref={phoneRef}
+            className="relative h-[660px] w-[320px] rounded-[3.4rem] border-[10px] border-neutral-950 bg-neutral-950 shadow-[0_35px_90px_rgba(17,24,39,0.22)] [transform-style:preserve-3d] will-change-transform md:h-[720px] md:w-[342px]"
           >
             <div className="absolute inset-x-0 top-0 z-30 flex justify-center">
               <div className="h-7 w-36 rounded-b-3xl bg-neutral-950" />
@@ -147,10 +206,8 @@ export function SplineSceneBasic() {
 
             <div className="relative h-full overflow-hidden rounded-[2.7rem] bg-neutral-950">
               <div className="absolute inset-0 bg-black" />
-              <motion.div
-                initial={false}
-                animate={{ opacity: activeScreen === 'home' ? 1 : 0, x: activeScreen === 'home' ? 0 : -20, scale: activeScreen === 'home' ? 1 : 0.98 }}
-                transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+              <div
+                ref={homeScreenRef}
                 className={`${activeScreen === 'home' ? 'flex' : 'hidden'} absolute inset-0 flex-col px-5 pt-12 pb-4 text-white`}
               >
                 <div className="mb-6 flex items-center justify-between border-b border-white/10 pb-5">
@@ -190,7 +247,8 @@ export function SplineSceneBasic() {
                     <div className="relative mx-auto mt-6 flex h-48 w-48 items-center justify-center">
                       <svg className="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 100 100">
                         <circle cx="50" cy="50" r="40" fill="none" stroke="#2a1018" strokeWidth="5" />
-                        <motion.circle
+                        <circle
+                          ref={ringRef}
                           cx="50"
                           cy="50"
                           r="40"
@@ -199,7 +257,7 @@ export function SplineSceneBasic() {
                           strokeWidth="5"
                           strokeLinecap="round"
                           strokeDasharray="251"
-                          style={{ strokeDashoffset: ringDashoffset }}
+                          style={{ strokeDashoffset: 251 }}
                         />
                       </svg>
                       
@@ -225,9 +283,9 @@ export function SplineSceneBasic() {
                       </button>
                     </div>
 
-                    <motion.p className="mt-3 text-center text-xs font-bold text-[#ff3f68]">
+                    <p className="mt-3 text-center text-xs font-bold text-[#ff3f68]">
                       {holdTextDisplay}
-                    </motion.p>
+                    </p>
                   </div>
                 )}
 
@@ -238,12 +296,10 @@ export function SplineSceneBasic() {
                 ) : null}
 
                 <PhoneNav active={activeScreen} onNavigate={setActiveScreen} />
-              </motion.div>
+              </div>
 
-              <motion.div
-                initial={false}
-                animate={{ opacity: activeScreen === 'map' ? 1 : 0, x: activeScreen === 'map' ? 0 : activeScreen === 'home' ? 26 : -26, scale: activeScreen === 'map' ? 1 : 0.98 }}
-                transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+              <div
+                ref={mapScreenRef}
                 className={`${activeScreen === 'map' ? 'flex' : 'hidden'} absolute inset-0 flex-col px-5 pt-12 pb-4 text-white`}
               >
                 <div className="mb-6 flex items-center justify-between border-b border-white/10 pb-5">
@@ -267,7 +323,7 @@ export function SplineSceneBasic() {
                       </div>
                       <svg className="absolute inset-0 h-full w-full" viewBox="0 0 280 400" fill="none" aria-hidden="true">
                         {/* Single Route Shadow/Glow */}
-                        <motion.path
+                        <path
                           d="M101 320 C128 260 135 190 148 110"
                           stroke="#ff3f68"
                           strokeWidth="12"
@@ -276,7 +332,7 @@ export function SplineSceneBasic() {
                         />
 
                         {/* Static Single Route Base */}
-                        <motion.path
+                        <path
                           d="M101 320 C128 260 135 190 148 110"
                           stroke="#ff3f68"
                           strokeWidth="6"
@@ -285,25 +341,23 @@ export function SplineSceneBasic() {
                         />
 
                         {/* Animated Flowing Line (Waze style continuous movement) */}
-                        <motion.path
+                        <path
+                          ref={routeFlowRef}
                           d="M101 320 C128 260 135 190 148 110"
                           stroke="#ff3f68"
                           strokeWidth="6"
                           strokeLinecap="round"
                           strokeDasharray="20 40"
-                          animate={{ strokeDashoffset: [60, 0] }}
-                          transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
                         />
                         
                         {/* High-contrast inner dashes for speed illusion */}
-                        <motion.path
+                        <path
+                          ref={routeDashRef}
                           d="M101 320 C128 260 135 190 148 110"
                           stroke="#ffffff"
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeDasharray="4 26"
-                          animate={{ strokeDashoffset: [30, 0] }}
-                          transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
                         />
                       </svg>
                       
@@ -311,9 +365,12 @@ export function SplineSceneBasic() {
                       <div className="absolute left-[108px] top-[70px] flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-500 text-white shadow-lg shadow-rose-950/25">
                         <ShieldCheck className="h-6 w-6" />
                       </div>
-                      <motion.div
-                        className="absolute left-[128px] top-[90px] h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full border-[4px] border-[#ff3f68] bg-[#ff3f68]/10 shadow-[0_0_0_8px_rgba(255,63,104,0.15)]"
-                      />
+                      <div className="absolute left-[128px] top-[90px] h-10 w-10 -translate-x-1/2 -translate-y-1/2">
+                        <div
+                          ref={targetPulseRef}
+                          className="h-full w-full rounded-full border-[4px] border-[#ff3f68] bg-[#ff3f68]/10 shadow-[0_0_0_8px_rgba(255,63,104,0.15)]"
+                        />
+                      </div>
 
                       {/* Origin Marker (User location) */}
                       <div className="absolute left-[101px] top-[320px] h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full border-[4px] border-white bg-[#ff3f68] shadow-lg" />
@@ -350,12 +407,10 @@ export function SplineSceneBasic() {
                 </div>
 
                 <PhoneNav active={activeScreen} onNavigate={setActiveScreen} />
-              </motion.div>
+              </div>
 
-              <motion.div
-                initial={false}
-                animate={{ opacity: activeScreen === 'profile' ? 1 : 0, x: activeScreen === 'profile' ? 0 : 24, scale: activeScreen === 'profile' ? 1 : 0.98 }}
-                transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+              <div
+                ref={profileScreenRef}
                 className={`${activeScreen === 'profile' ? 'flex' : 'hidden'} absolute inset-0 flex-col px-5 pt-12 pb-4 text-white`}
               >
                 <div className="mb-5 flex items-center justify-between border-b border-white/10 pb-4">
@@ -410,9 +465,9 @@ export function SplineSceneBasic() {
                 </div>
 
                 <PhoneNav active={activeScreen} onNavigate={setActiveScreen} />
-              </motion.div>
+              </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </Card>
@@ -442,27 +497,15 @@ function PhoneNav({ active, onNavigate }: { active: AppScreen; onNavigate: (scre
       <div className="relative flex h-full items-end justify-around pb-4 px-2 text-white/55">
         <button type="button" onClick={() => onNavigate('home')} className={`relative flex w-16 justify-center transition-colors duration-300 ${active === 'home' ? 'text-[#ff3f68]' : 'hover:text-white'}`}>
           <Home className="h-7 w-7" />
-          <motion.div
-            initial={false}
-            animate={{ opacity: active === 'home' ? 1 : 0, scale: active === 'home' ? 1 : 0.5, y: active === 'home' ? 0 : 10 }}
-            className="absolute -top-7 h-3.5 w-3.5 rounded-full bg-[#ff3f68] shadow-[0_0_15px_rgba(255,63,104,0.8)]"
-          />
+          <NavDot visible={active === 'home'} />
         </button>
         <button type="button" onClick={() => onNavigate('map')} className={`relative flex w-16 justify-center transition-colors duration-300 ${active === 'map' ? 'text-[#ff3f68]' : 'hover:text-white'}`}>
           <Compass className="h-7 w-7" />
-          <motion.div
-            initial={false}
-            animate={{ opacity: active === 'map' ? 1 : 0, scale: active === 'map' ? 1 : 0.5, y: active === 'map' ? 0 : 10 }}
-            className="absolute -top-7 h-3.5 w-3.5 rounded-full bg-[#ff3f68] shadow-[0_0_15px_rgba(255,63,104,0.8)]"
-          />
+          <NavDot visible={active === 'map'} />
         </button>
         <button type="button" onClick={() => onNavigate('profile')} className={`relative flex w-16 justify-center transition-colors duration-300 ${active === 'profile' ? 'text-[#ff3f68]' : 'hover:text-white'}`}>
           <Circle className="h-7 w-7" />
-          <motion.div
-            initial={false}
-            animate={{ opacity: active === 'profile' ? 1 : 0, scale: active === 'profile' ? 1 : 0.5, y: active === 'profile' ? 0 : 10 }}
-            className="absolute -top-7 h-3.5 w-3.5 rounded-full bg-[#ff3f68] shadow-[0_0_15px_rgba(255,63,104,0.8)]"
-          />
+          <NavDot visible={active === 'profile'} />
         </button>
         <button type="button" onClick={() => onNavigate('profile')} className="flex w-16 justify-center transition hover:text-white">
           <SlidersHorizontal className="h-7 w-7" />
@@ -470,4 +513,21 @@ function PhoneNav({ active, onNavigate }: { active: AppScreen; onNavigate: (scre
       </div>
     </div>
   )
+}
+
+function NavDot({ visible }: { visible: boolean }) {
+  const dotRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    anime({
+      targets: dotRef.current,
+      opacity: visible ? [0, 1] : [1, 0],
+      scale: visible ? [0.5, 1] : [1, 0.5],
+      translateY: visible ? [10, 0] : [0, 10],
+      duration: 360,
+      easing: visible ? 'easeOutBack' : 'easeOutExpo',
+    })
+  }, [visible])
+
+  return <div ref={dotRef} className="absolute -top-7 h-3.5 w-3.5 rounded-full bg-[#ff3f68] opacity-0 shadow-[0_0_15px_rgba(255,63,104,0.8)]" />
 }

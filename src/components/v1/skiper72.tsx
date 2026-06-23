@@ -1,62 +1,56 @@
 'use client'
 
-import { useRef } from 'react'
-import { MotionValue, motion, useScroll, useTransform } from 'framer-motion'
+import { useEffect, useRef } from 'react'
 import { cn } from '@/lib/utils'
+import { setAnimeStyles } from '@/lib/anime'
 
 interface SkiperTextRevealHProps {
   children: string
   className?: string
 }
 
-interface RevealWordProps {
-  word: string
-  index: number
-  total: number
-  progress: MotionValue<number>
-}
-
-function RevealWord({ word, index, total, progress }: RevealWordProps) {
-  const animationEnd = 0.8
-  const duration = 0.2
-  
-  const start = index * ((animationEnd - duration) / Math.max(total - 1, 1))
-  const end = start + duration
-
-  const opacity = useTransform(
-    progress,
-    [0, start, start + duration * 0.5, 1],
-    [0, 0, 1, 1]
-  )
-  const y = useTransform(
-    progress,
-    [0, start, end, 1],
-    ['15px', '15px', '0px', '0px']
-  )
-
-  return (
-    <motion.span
-      style={{ opacity, y }}
-      className="mr-[0.25em] inline-block text-neutral-950"
-    >
-      {word}
-    </motion.span>
-  )
-}
-
 export function SkiperTextRevealH({ children, className }: SkiperTextRevealHProps) {
   const containerRef = useRef<HTMLDivElement>(null)
-  
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start start', 'end end'],
-  })
+  const wordRefs = useRef<HTMLSpanElement[]>([])
 
   // Split content into discrete words for fluid wrapping
   const words = children
     .replace(/\n/g, ' ')
     .split(' ')
     .filter(Boolean)
+
+  useEffect(() => {
+    const updateReveal = () => {
+      const container = containerRef.current
+      if (!container) return
+
+      const rect = container.getBoundingClientRect()
+      const travel = Math.max(rect.height - window.innerHeight, 1)
+      const progress = Math.min(Math.max(-rect.top / travel, 0), 1)
+      const animationEnd = 0.82
+      const duration = 0.18
+
+      wordRefs.current.forEach((word, index) => {
+        const start = index * ((animationEnd - duration) / Math.max(words.length - 1, 1))
+        const local = Math.min(Math.max((progress - start) / duration, 0), 1)
+        const eased = 1 - Math.pow(1 - local, 4)
+
+        setAnimeStyles(word, {
+          opacity: eased,
+          transform: `translateY(${15 - eased * 15}px)`,
+        })
+      })
+    }
+
+    updateReveal()
+    window.addEventListener('scroll', updateReveal, { passive: true })
+    window.addEventListener('resize', updateReveal)
+
+    return () => {
+      window.removeEventListener('scroll', updateReveal)
+      window.removeEventListener('resize', updateReveal)
+    }
+  }, [words.length])
 
   return (
     <div ref={containerRef} className="relative h-[220vh] w-full bg-white">
@@ -69,13 +63,15 @@ export function SkiperTextRevealH({ children, className }: SkiperTextRevealHProp
           )}
         >
           {words.map((word, index) => (
-            <RevealWord
+            <span
               key={`${word}-${index}`}
-              word={word}
-              index={index}
-              total={words.length}
-              progress={scrollYProgress}
-            />
+              ref={(node) => {
+                if (node) wordRefs.current[index] = node
+              }}
+              className="mr-[0.25em] inline-block translate-y-[15px] text-neutral-950 opacity-0"
+            >
+              {word}
+            </span>
           ))}
         </p>
       </div>
