@@ -18,11 +18,14 @@
   --accent: #ff3f68;
   --accent-deep: #be185d;
   --accent-bright: #ec1380;
-  --grid: rgba(255, 255, 255, 0.04);
+  --accent-light: #ffb3c6;
+  --grid: rgba(255, 255, 255, 0.035);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.12);
 }
 
 * {
-  border-color: rgba(255, 255, 255, 0.08);
+  border-color: var(--border);
 }
 
 html {
@@ -45,14 +48,18 @@ body {
 }
 
 ::-webkit-scrollbar {
-  width: 9px;
+  width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #07070b;
+  background: #050507;
 }
 ::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, #be185d, #ff3f68);
-  border-radius: 9px;
+  border-radius: 8px;
+  border: 2px solid #050507;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #ec1380, #ff5a7f);
 }
 
 @keyframes floaty {
@@ -81,12 +88,16 @@ body {
   80% { transform: translateY(14px); opacity: 0; }
   100% { opacity: 0; }
 }
+@keyframes gradient-pan {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
 
 .animate-floaty { animation: floaty 6s ease-in-out infinite; }
 .animate-heartbeat { animation: heartbeat 2.6s ease-in-out infinite; }
 
 .text-gradient-flare {
-  background: linear-gradient(110deg, #ffffff 10%, #ffb3c6 40%, #ff3f68 70%, #be185d 100%);
+  background: linear-gradient(110deg, #ffffff 8%, #ffd0dc 32%, #ff3f68 64%, #be185d 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -96,18 +107,67 @@ body {
   background-image:
     linear-gradient(var(--grid) 1px, transparent 1px),
     linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-  background-size: 64px 64px;
+  background-size: 56px 56px;
+  background-position: -1px -1px;
+}
+
+.bg-grid-fade {
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 30%, transparent 100%);
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 30%, transparent 100%);
 }
 
 .glass {
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  background: rgba(255, 255, 255, 0.035);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
+}
+
+.glass-strong {
+  background: rgba(13, 13, 20, 0.72);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
   border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05), 0 8px 32px -8px rgba(0, 0, 0, 0.4);
 }
 
 .glow-flare {
   box-shadow: 0 0 60px -12px rgba(255, 63, 104, 0.55);
+}
+
+.glow-flare-sm {
+  box-shadow: 0 0 24px -6px rgba(255, 63, 104, 0.5);
+}
+
+.border-gradient {
+  position: relative;
+  background-clip: padding-box;
+}
+.border-gradient::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(255, 63, 104, 0.5), rgba(255, 255, 255, 0.04) 50%, rgba(190, 24, 93, 0.3));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.shimmer {
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.06) 45%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.06) 55%,
+    transparent 70%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
 }
 
 .reveal {
@@ -121,6 +181,13 @@ body {
   transform: translateY(0);
 }
 
+.section-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(255, 63, 104, 0.06), transparent 70%);
+}
+
 .marquee-track {
   display: inline-flex;
   white-space: nowrap;
@@ -129,6 +196,24 @@ body {
 @keyframes marquee {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
+}
+
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 35%, rgba(255, 255, 255, 0.25) 50%, transparent 65%);
+  background-size: 200% 100%;
+  background-position: -100% 0;
+  transition: background-position 0.6s ease;
+  pointer-events: none;
+}
+.btn-primary:hover::after {
+  background-position: 100% 0;
 }
 
 @media (prefers-reduced-motion: reduce) {

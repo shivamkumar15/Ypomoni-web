@@ -53,7 +53,8 @@ export function Evidence() {
 
   return (
     <section id="evidence" className="relative w-full overflow-hidden bg-ink-soft py-28 md:py-36">
-      <div className="pointer-events-none absolute inset-0 bg-grid opacity-30" />
+      <div className="pointer-events-none absolute inset-0 bg-grid bg-grid-fade opacity-25" />
+      <div className="section-glow" />
       <div className="mx-auto max-w-7xl px-6 md:px-10 lg:px-12">
         <Reveal className="max-w-3xl">
           <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#ff3f68]">Silent evidence</p>
@@ -62,7 +63,7 @@ export function Evidence() {
             <br />
             <span className="text-gradient-flare">So you don&apos;t have to remember.</span>
           </h2>
-          <p className="mt-6 text-lg leading-8 text-white/55">
+          <p className="mt-6 text-lg leading-8 text-white/50">
             The moment emergency mode begins, Ypomoni starts silently recording photos, audio, and video in the background — building a secure, timestamped record while you focus on staying safe.
           </p>
         </Reveal>
@@ -70,34 +71,35 @@ export function Evidence() {
         <div className="mt-16 grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
           {/* Evidence vault mock */}
           <Reveal className="relative overflow-hidden rounded-3xl glass p-6 md:p-8" delay={80}>
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#ff3f68]/30 to-transparent" />
             <div ref={recRef} className="mb-6 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="relative flex h-3 w-3">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
-                  <span className="relative inline-flex h-3 w-3 rounded-full bg-red-500" />
+                  <span className="relative inline-flex h-3 w-3 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]" />
                 </span>
                 <span className="font-display text-sm font-bold uppercase tracking-[0.2em] text-red-400">Recording</span>
               </div>
-              <span className="font-display text-sm font-bold tabular-nums text-white/50">Emergency mode · 00:09.5</span>
+              <span className="font-display text-sm font-bold tabular-nums text-white/40">Emergency mode · 00:09.5</span>
             </div>
 
-            <div className="mb-5 h-1.5 overflow-hidden rounded-full bg-white/10">
-              <div ref={barRef} className="h-full rounded-full bg-gradient-to-r from-[#be185d] to-[#ff3f68]" style={{ width: '8%' }} />
+            <div className="mb-5 h-1.5 overflow-hidden rounded-full bg-white/8">
+              <div ref={barRef} className="h-full rounded-full bg-gradient-to-r from-[#be185d] to-[#ff3f68] shadow-[0_0_12px_rgba(255,63,104,0.4)]" style={{ width: '8%' }} />
             </div>
 
             <div className="grid gap-3">
               {items.map((item, i) => {
                 const Icon = item.icon
                 return (
-                  <Reveal key={`${item.label}-${i}`} delay={i * 110} className={`flex items-center gap-4 rounded-2xl border border-white/8 bg-gradient-to-r ${item.tint} p-4`}>
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#ff3f68]">
+                  <Reveal key={`${item.label}-${i}`} delay={i * 110} className={`flex items-center gap-4 rounded-2xl border border-white/8 bg-gradient-to-r ${item.tint} p-4 transition-all duration-300 hover:border-white/12`}>
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/8 text-[#ff3f68] ring-1 ring-white/5">
                       <Icon className="h-5 w-5" />
                     </div>
                     <div className="flex-1">
                       <p className="font-semibold text-white">{item.label}</p>
-                      <p className="text-xs text-white/45">Captured automatically</p>
+                      <p className="text-xs text-white/40">Captured automatically</p>
                     </div>
-                    <span className="font-display text-sm font-bold tabular-nums text-white/60">{item.time}</span>
+                    <span className="font-display text-sm font-bold tabular-nums text-white/55">{item.time}</span>
                   </Reveal>
                 )
               })}
@@ -117,19 +119,20 @@ export function Evidence() {
             {guarantees.map((g, i) => {
               const Icon = g.icon
               return (
-                <Reveal key={g.title} delay={i * 100} className="group flex gap-5 rounded-3xl glass p-6 transition-all duration-500 hover:border-[#ff3f68]/30">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/8 text-[#ff3f68] transition group-hover:scale-110">
+                <Reveal key={g.title} delay={i * 100} className="group flex gap-5 rounded-3xl glass p-6 transition-all duration-500 hover:border-[#ff3f68]/25 hover:bg-white/[0.05]">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/[0.06] text-[#ff3f68] ring-1 ring-white/5 transition group-hover:scale-110 group-hover:ring-[#ff3f68]/20">
                     <Icon className="h-6 w-6" />
                   </div>
                   <div>
                     <h3 className="font-display text-xl font-bold tracking-tight text-white">{g.title}</h3>
-                    <p className="mt-2 leading-7 text-white/55">{g.desc}</p>
+                    <p className="mt-2 leading-7 text-white/50">{g.desc}</p>
                   </div>
                 </Reveal>
               )
             })}
 
-            <Reveal delay={300} className="rounded-3xl border border-[#ff3f68]/30 bg-gradient-to-br from-[#ff3f68]/10 to-transparent p-6">
+            <Reveal delay={300} className="relative overflow-hidden rounded-3xl border border-[#ff3f68]/25 bg-gradient-to-br from-[#ff3f68]/10 to-transparent p-6">
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#ff3f68]/40 to-transparent" />
               <p className="font-display text-lg font-bold leading-7 text-white">
                 Your record is your proof — built automatically, protected by design.
               </p>

@@ -100,7 +100,8 @@ export function PhoneDemo() {
 
   return (
     <section ref={sectionRef} id="demo" className="relative w-full overflow-hidden bg-ink py-28 md:py-36">
-      <div className="pointer-events-none absolute right-0 top-1/4 h-96 w-96 rounded-full bg-[#be185d]/10 blur-[120px]" />
+      <div className="pointer-events-none absolute right-0 top-1/4 h-96 w-96 rounded-full bg-[#be185d]/8 blur-[120px]" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#ff3f68]/25 to-transparent" />
       <div className="mx-auto grid max-w-7xl items-center gap-16 px-6 md:px-10 lg:grid-cols-[1fr_0.85fr] lg:px-12">
         <div>
           <Reveal>
@@ -114,7 +115,7 @@ export function PhoneDemo() {
             </h2>
           </Reveal>
           <Reveal delay={160}>
-            <p className="mt-6 max-w-lg text-lg leading-8 text-white/60">
+            <p className="mt-6 max-w-lg text-lg leading-8 text-white/50">
               Press and hold the SOS button to feel the deliberate 3-second confirmation. Switch between Home, Live Map, and Profile to explore every screen — it&apos;s fully interactive.
             </p>
           </Reveal>
@@ -126,11 +127,11 @@ export function PhoneDemo() {
                 { n: '02', t: 'Contacts get notified instantly', d: 'Your trusted circle receives the alert with your live status.' },
                 { n: '03', t: 'Live Map takes over', d: 'Route, ETA, and Google Maps handoff for fast response.' },
               ].map((s) => (
-                <div key={s.n} className="flex gap-4 rounded-2xl glass p-5">
-                  <span className="font-display text-2xl font-bold text-[#ff3f68]/80">{s.n}</span>
+                <div key={s.n} className="group flex gap-4 rounded-2xl glass p-5 transition-all duration-300 hover:border-[#ff3f68]/20 hover:bg-white/[0.05]">
+                  <span className="font-display text-2xl font-bold tabular-nums text-[#ff3f68]/70 transition-colors group-hover:text-[#ff3f68]">{s.n}</span>
                   <div>
                     <p className="font-semibold text-white">{s.t}</p>
-                    <p className="mt-1 text-sm leading-6 text-white/55">{s.d}</p>
+                    <p className="mt-1 text-sm leading-6 text-white/50">{s.d}</p>
                   </div>
                 </div>
               ))}
